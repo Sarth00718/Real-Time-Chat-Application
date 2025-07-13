@@ -34,7 +34,7 @@ function SendInput() {
   };
 
   return (
-    <div className="pb-[35px] md:pb-[12px] border-t border-white/10 bg-blue-900/40 backdrop-blur-sm p-4 shadow-lg">
+    <div className="pb-[42px] md:pb-[12px] border-t border-white/10 bg-blue-900/40 backdrop-blur-sm p-4 shadow-lg">
       <form onSubmit={handleSubmit} className='flex items-center'>
         <div className='w-full relative rounded-full overflow-hidden'>
           <input
