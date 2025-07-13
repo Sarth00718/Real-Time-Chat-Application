@@ -14,33 +14,37 @@ const OtherUser = ({ user }) => {
     };
 
     const isSelected = selectedUser?._id === user?._id;
-    
+
     return (
         <div
             onClick={() => selectedUserHandler(user)}
-            className={`mb-2 p-3 rounded-xl cursor-pointer ${
-                isSelected 
-                    ? 'bg-blue-800 shadow-md' 
+            className={`mb-2 p-3 rounded-xl cursor-pointer ${isSelected
+                    ? 'bg-blue-800 shadow-md'
                     : 'hover:bg-white/10'
-            }`}
+                }`}
         >
             <div className="flex items-center gap-3">
-                <div className={`avatar ${isOnline ? 'online' : 'offline'}`}>
-                    <div className={`w-12 h-12 rounded-full ring ${isSelected ? 'ring-white' : 'ring-blue-400/30'} ring-offset-base-100 ring-offset-1`}>
-                        <img src={user?.profilePhoto} alt={`${user?.fullName}'s profile`} className="object-cover" />
-                    </div>
+                <div className="relative w-12 h-12">
+                    <img
+                        src={user?.profilePhoto}
+                        alt={`${user?.fullName}'s profile`}
+                        className={`rounded-full ring ${isSelected ? 'ring-white' : 'ring-blue-400/30'} ring-offset-base-100 ring-offset-1 w-full h-full object-cover`}
+                    />
+                    {isOnline && (
+                        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-white"></span>
+                    )}
                 </div>
-                
+
                 <div className='flex-1 min-w-0'>
                     <div className='flex justify-between items-center'>
                         <h3 className={`font-medium truncate ${isSelected ? 'text-white' : 'text-gray-200'}`}>
                             {user?.fullName}
                         </h3>
                     </div>
-                    
+
                     <div className="flex justify-between items-center mt-1">
                         <p className="text-sm truncate text-gray-400">
-                            {isOnline ? 'Online' : 'Offline'}
+                            {user?.username}
                         </p>
                     </div>
                 </div>

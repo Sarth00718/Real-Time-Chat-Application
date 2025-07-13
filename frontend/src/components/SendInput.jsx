@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { IoSend } from 'react-icons/io5';
+import { BsEmojiSmile } from 'react-icons/bs';
+import EmojiPicker from 'emoji-picker-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setMessages } from '../redux/messageSlice.js';
 import axios from 'axios';
@@ -7,58 +9,92 @@ import { BASE_URL } from '../main';
 
 function SendInput() {
   const [message, setMessage] = useState('');
-  const { selectedUser, authUser } = useSelector(store => store.user);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+  const { selectedUser } = useSelector(store => store.user);
   const { messages } = useSelector(store => store.message);
   const dispatch = useDispatch();
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    const trimmedMessage = message.trim();
+    if (!trimmedMessage || !selectedUser?._id) return;
+
     try {
-      if (!selectedUser?._id) {
-        console.error("No valid recipient selected");
-        return;
-      }
-      const res = await axios.post(`${BASE_URL}/api/v1/message/send/${selectedUser._id}`, {
-        message: message.trim()  // Ensure we're sending trimmed message
-      }, {
-        withCredentials: true, 
-        headers: {
-          'Content-Type': 'application/json',
+      const res = await axios.post(
+        `${BASE_URL}/api/v1/message/send/${selectedUser._id}`,
+        { message: trimmedMessage },
+        {
+          withCredentials: true,
+          headers: { 'Content-Type': 'application/json' }
         }
-      });
-      dispatch(setMessages([...messages, res?.data?.newMessage]))
+      );
+
+      dispatch(setMessages([...messages, res.data?.newMessage]));
+      setMessage('');
     } catch (error) {
       console.error("Failed to send message:", error);
     }
   };
 
+  const isDisabled = !message.trim();
+
+  const onEmojiClick = (emojiData) => {
+    setMessage(prev => prev + emojiData.emoji);
+  };
+
   return (
-    <div className="pb-[42px] md:pb-[12px] border-t border-white/10 bg-blue-900/40 backdrop-blur-sm p-4 shadow-lg">
-      <form onSubmit={handleSubmit} className='flex items-center'>
-        <div className='w-full relative rounded-full overflow-hidden'>
+    <div className="relative py-4 md:pb-3 border-t border-white/10 bg-blue-900/40 backdrop-blur-md p-4">
+      <form onSubmit={handleSubmit} className="flex items-center gap-2">
+        {/* Emoji button */}
+        <button
+          type="button"
+          onClick={() => setShowEmojiPicker(prev => !prev)}
+          className="text-white text-xl p-2 rounded-full hover:bg-white/20 transition"
+          aria-label="Toggle Emoji Picker"
+        >
+          <BsEmojiSmile />
+        </button>
+
+        {/* Input + send */}
+        <div className="relative w-full">
           <input
-            value={message}
-            onChange={(e)=>setMessage(e.target.value)}
             type="text"
-            placeholder='Type your message...'
-            className='border text-base rounded-full block w-full py-3 px-5 border-white/20 
-              bg-white/10 text-white placeholder-gray-300 focus:outline-none focus:ring-2 
-              focus:ring-blue-500/50 focus:border-transparent shadow-inner'
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Type your message..."
+            className="w-full py-3 px-5 rounded-full bg-white/10 border border-white/20 
+                       placeholder-gray-300 text-white focus:outline-none focus:ring-2 
+                       focus:ring-blue-500/50 focus:border-transparent shadow-inner text-base"
+            autoComplete="off"
           />
-          
-          <button 
-            type="submit" 
-            disabled={!message.trim()}
-            className={`absolute flex items-center justify-center right-2 top-1/2 transform -translate-y-1/2 
-              rounded-full w-10 h-10 text-white transition-all ${message.trim() ? 
-              'bg-gradient-to-r from-blue-600 to-blue-500 opacity-100' : 
-              'bg-gray-500/50 opacity-50 cursor-not-allowed'}`}
+
+          <button
+            type="submit"
+            disabled={isDisabled}
+            className={`absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center 
+                        rounded-full transition-all ${
+                          isDisabled 
+                            ? 'bg-gray-500/50 cursor-not-allowed opacity-50' 
+                            : 'bg-gradient-to-r from-blue-600 to-blue-500 hover:scale-105'
+                        } text-white`}
+            aria-label="Send message"
           >
-            <IoSend />
+            <IoSend className="w-5 h-5" />
           </button>
         </div>
       </form>
+
+      {/* Emoji Picker Dropdown */}
+      {showEmojiPicker && (
+        <div className="absolute bottom-[90px] left-4 z-50">
+          <EmojiPicker
+            onEmojiClick={onEmojiClick}
+            height={350}
+            width={280}
+          />
+        </div>
+      )}
     </div>
   );
 }

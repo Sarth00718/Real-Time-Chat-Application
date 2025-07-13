@@ -23,17 +23,16 @@ export const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         //profile photo 
-        const maleProfilePhoto = `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}&backgroundColor=b6e3f4`;
-        const femaleProfilePhoto = `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}&backgroundColor=ffd5dc`;
+        // profilePhoto
+        const maleProfilePhoto = `https://avatar.iran.liara.run/public/boy?username=${username}`;
+        const femaleProfilePhoto = `https://avatar.iran.liara.run/public/girl?username=${username}`;
 
         await User.create({
             fullName,
             username,
             password: hashedPassword,
             profilePhoto: gender === "male" ? maleProfilePhoto : femaleProfilePhoto,
-            // profilePhoto: `https://api.dicebear.com/7.x/adventurer/svg?seed=${username}&gender=${gender}`
             gender
-
         })
         return res.status(201).json({
             message: "User registered successfully",
