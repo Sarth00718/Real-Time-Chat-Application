@@ -85,7 +85,7 @@ const Sidebar = () => {
                 </div>
                 <div className="flex-1">
                     <h3 className="font-semibold text-white truncate">{authUser?.fullName}</h3>
-                    <p className="text-xs text-gray-300 truncate">{authUser?.username}</p>
+                    <p className="text-xs text-gray-600 truncate">{authUser?.username}</p>
                 </div>
             </div>
             
