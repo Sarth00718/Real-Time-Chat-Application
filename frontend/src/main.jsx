@@ -15,7 +15,9 @@ let persistor = persistStore(store);
 
 axios.defaults.withCredentials = true;
 
-export const BASE_URL = 'https://real-time-chat-application-hwsq.onrender.com'
+// export const BASE_URL = 'https://real-time-chat-application-hwsq.onrender.com'
+export const BASE_URL = 'https://localhost:3000';
+
 
 const root = createRoot(document.getElementById('root'));
 root.render(
