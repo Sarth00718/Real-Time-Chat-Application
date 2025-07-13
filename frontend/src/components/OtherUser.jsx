@@ -43,7 +43,7 @@ const OtherUser = ({ user }) => {
                     </div>
 
                     <div className="flex justify-between items-center mt-1">
-                        <p className="text-sm truncate text-gray-400">
+                        <p className="text-sm truncate text-gray-800">
                             {user?.username}
                         </p>
                     </div>
