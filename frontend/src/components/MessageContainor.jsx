@@ -42,7 +42,7 @@ function MessageContainor() {
       )}
 
       {/* Main Chat Section */}
-      <div className="flex flex-col h-full w-full bg-blue-500/40 md:rounded-none">
+      <div className="flex flex-col flex-1 h-full min-h-0 w-full bg-blue-500/40 md:rounded-none">
 
         {selectedUser ? (
           <>
@@ -81,7 +81,7 @@ function MessageContainor() {
             </div>
 
             {/* Messages & Input */}
-            <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 flex flex-col overflow-hidden h-full min-h-0">
               <Messages />
               <SendInput />
             </div>

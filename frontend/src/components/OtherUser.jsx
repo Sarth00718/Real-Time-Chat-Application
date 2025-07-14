@@ -19,7 +19,7 @@ const OtherUser = ({ user }) => {
         <div
             onClick={() => selectedUserHandler(user)}
             className={`mb-2 p-3 rounded-xl cursor-pointer ${isSelected
-                    ? 'bg-blue-800 shadow-md'
+                    ? 'bg-blue-400 shadow-md'
                     : 'hover:bg-white/10'
                 }`}
         >

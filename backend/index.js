@@ -6,18 +6,24 @@ import messageRoutes from './routes/messageRoutes.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { app , server} from './socket/socket.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 dotenv.config();  
 
 const PORT = process.env.PORT || 3000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
 
 // middlewares
-// middleware
 app.use(express.urlencoded({extended:true}));
 app.use(express.json()); 
 app.use(cookieParser());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const corsOption={
     origin:'https://real-time-chat-application-two-smoky.vercel.app',
-    //origin: 'http://localhost:5173',
+   // origin: 'http://localhost:5173',
     credentials:true
 };
 app.use(cors(corsOption)); 

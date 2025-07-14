@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Message from './Message.jsx';
 import useGetMessages from '../hook/useGetMessages.jsx';
 import { useSelector } from 'react-redux';
@@ -78,15 +78,7 @@ function Messages() {
   return (
     <div 
       ref={containerRef}
-      className='px-2 py-4 flex-1 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent h-full min-h-0 md:min-h-0'
-      style={{ 
-        scrollbarWidth: 'thin', 
-        msOverflowStyle: 'none',
-        WebkitOverflowScrolling: 'touch', // Enable momentum scrolling on iOS
-        '::-webkit-scrollbar': { width: '8px' },
-        '::-webkit-scrollbar-track': { background: 'transparent' },
-        '::-webkit-scrollbar-thumb': { background: 'rgba(59, 130, 246, 0.5)', borderRadius: '4px' }
-      }}
+      className="messages-container px-2 py-4 flex-1 overflow-y-auto overscroll-contain h-full min-h-0"
     >
       {(!messages || messages.length === 0) && (
         <motion.div 
@@ -108,13 +100,17 @@ function Messages() {
           if (item.type === 'date') {
             return (
               <div key={item.id} className="flex justify-center my-3">
-                <div className="bg-blue-700/40 backdrop-blur-sm px-4 py-1 rounded-full text-xs font-medium text-white shadow-sm">
+                <div className="glass-dark px-4 py-1 rounded-full text-xs font-medium text-white shadow-sm">
                   {item.value}
                 </div>
               </div>
             );
           } else {
-            return <Message key={item.id} message={item.value} />;
+            return (
+              <div key={item.id} className="animate-fade-in">
+                <Message message={item.value} />
+              </div>
+            );
           }
       })}
       
