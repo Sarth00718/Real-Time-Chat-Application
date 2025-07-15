@@ -1,6 +1,8 @@
+import cloudinary from "../config/cloudinary.js";
 import { Conversation } from "../models/conversationmodel.js";
 import { Message } from "../models/messagemodel.js";
-import { getRecieverSocketId, io } from "../socket/socket.js";
+import { getRecieverSocketId, io } from "../socket/socket.js"
+import fs from "fs";
 
 export const sendMessage = async (req, res) => {
     try {
@@ -19,8 +21,20 @@ export const sendMessage = async (req, res) => {
             });
         }
 
-        // Add in sendMessage controller
-        const files = req.files?.map(file => `/uploads/${file.filename}`);
+        // Upload files to Cloudinary
+        let files = [];
+        if (req.files && req.files.length > 0) {
+            const uploadPromises = req.files.map(async (file) => {
+                const result = await cloudinary.uploader.upload(file.path, {
+                    resource_type: "auto",
+                    folder: "chat-app",
+                });
+                fs.unlinkSync(file.path); // delete temp file
+                return result.secure_url;
+            });
+
+            files = await Promise.all(uploadPromises);
+        }
 
         // Store in DB
         const newMessage = await Message.create({
@@ -30,11 +44,9 @@ export const sendMessage = async (req, res) => {
             files
         });
 
-        // Link message to conversation
         gotConversation.messages.push(newMessage._id);
         await Promise.all([gotConversation.save(), newMessage.save()]);
 
-        // Real-time socket update
         const recieverSocketId = getRecieverSocketId(receiverId);
         if (recieverSocketId) {
             io.to(recieverSocketId).emit('newMessage', newMessage);
