@@ -151,6 +151,7 @@ function SendInput() {
         {/* Hidden file input */}
         <input
           ref={fileInputRef}
+          name='files'
           type="file"
           multiple
           onChange={handleFileSelect}

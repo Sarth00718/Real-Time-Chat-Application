@@ -1,12 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedUser } from '../redux/userSlice.js';
+import { BASE_URL } from '../main.jsx';
 
 const OtherUser = ({ user }) => {
     const dispatch = useDispatch();
     const { selectedUser, onlineUsers } = useSelector(store => store.user);
 
-    // Safe check for .includes on possible null
     const isOnline = onlineUsers?.includes(user._id) ?? false;
 
     const selectedUserHandler = (user) => {
@@ -14,6 +14,14 @@ const OtherUser = ({ user }) => {
     };
 
     const isSelected = selectedUser?._id === user?._id;
+
+    // Debug logging
+    // console.log('User data:', user);
+    // console.log('Profile photo:', user?.profilePhoto);
+
+    const getImageUrl = (profilePhoto) => {
+            return `${BASE_URL}${profilePhoto}`;
+        };
 
     return (
         <div
@@ -26,7 +34,7 @@ const OtherUser = ({ user }) => {
             <div className="flex items-center gap-3">
                 <div className="relative w-12 h-12">
                     <img
-                        src={user?.profilePhoto}
+                        src={getImageUrl(user?.profilePhoto)}
                         alt={`${user?.fullName}'s profile`}
                         className={`rounded-full ring ${isSelected ? 'ring-white' : 'ring-blue-400/30'} ring-offset-base-100 ring-offset-1 w-full h-full object-cover`}
                     />

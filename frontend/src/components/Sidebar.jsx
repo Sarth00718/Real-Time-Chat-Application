@@ -42,6 +42,11 @@ const Sidebar = () => {
         }
     }, [search, originalUsers, dispatch]);
 
+    // Fix the image URL to include backend server
+    const getImageUrl = (profilePhoto) => {
+        return `${BASE_URL}${profilePhoto}`;
+    };
+
     const logoutHandler = async () => {
         try {
             const res = await axios.get(`${BASE_URL}/api/v1/user/logout`);
@@ -80,7 +85,11 @@ const Sidebar = () => {
             <div className="flex items-center gap-3 mb-4 p-3 bg-white/10 rounded-lg">
                 <div className="avatar online">
                     <div className="w-12 h-12 rounded-full">
-                        <img src={authUser?.profilePhoto} alt="Your profile" />
+                        <img 
+                            src={getImageUrl(authUser?.profilePhoto, authUser)} 
+                            alt="Your profile"
+                            className="w-full h-full object-cover rounded-full"
+                        />
                     </div>
                 </div>
                 <div className="flex-1">

@@ -23,9 +23,18 @@ export const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         //profile photo 
-        // profilePhoto
-        const maleProfilePhoto = `https://avatar.iran.liara.run/public/boy?username=${username}`;
-        const femaleProfilePhoto = `https://avatar.iran.liara.run/public/girl?username=${username}`;
+        // Base paths
+        const BOY_AVATAR_PATH = '/images/boy/';
+        const GIRL_AVATAR_PATH = '/images/girl/';
+
+        // Random avatar filenames
+        const boyAvatar = `AV${Math.floor(Math.random() * 50) + 1}.png`;      // AV1 to AV50
+        const girlAvatar = `AV${Math.floor(Math.random() * 50) + 51}.png`;    // AV51 to AV100
+
+        // Final image URLs
+        const maleProfilePhoto = `${BOY_AVATAR_PATH}${boyAvatar}`;
+        const femaleProfilePhoto = `${GIRL_AVATAR_PATH}${girlAvatar}`;
+
 
         await User.create({
             fullName,
@@ -76,7 +85,7 @@ export const login = async (req, res) => {
 
         const token = await jwt.sign(tokenData, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'None', secure:true }).json({
+        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'None', secure: true }).json({
             _id: user._id,
             username: user.username,
             fullName: user.fullName,
@@ -107,11 +116,15 @@ export const logout = async (req, res) => {
     }
 }
 
-//getotherusers
 export const getOtherUsers = async (req, res) => {
     try {
         const loggedInUserId = req.id;
         const otherUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
+        
+        // Debug logging
+        console.log('Other users:', otherUsers);
+        console.log('First user profilePhoto:', otherUsers[0]?.profilePhoto);
+        
         return res.status(200).json(otherUsers);
     } catch (error) {
         console.log(error);

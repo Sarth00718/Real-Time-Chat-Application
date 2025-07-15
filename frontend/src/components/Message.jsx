@@ -82,7 +82,7 @@ const Message = ({ message }) => {
                     )}
                     {/* File Attachments */}
                     {message?.files?.length > 0 && message.files.map((file, index) => {
-                        const fileUrl = `${import.meta.env.VITE_BASE_URL || ''}${file}`;
+                        const fileUrl = file; // ✅ Use as-is (already full Cloudinary URL)
                         const isImage = /\.(png|jpe?g|gif|webp)$/i.test(file);
                         const originalFileName = file.split('/').pop();
 
@@ -107,11 +107,6 @@ const Message = ({ message }) => {
                             </div>
                         );
                     })}
-
-                    {/* Fallback if no text or files */}
-                    {!message?.message && (!message?.files || message.files.length === 0) && (
-                        <span className="italic text-gray-300">No message content</span>
-                    )}
                 </div>
             </div>
             <div className="chat-footer opacity-50 text-xs flex gap-1 mt-1">

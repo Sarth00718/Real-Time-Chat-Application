@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { BiArrowBack, BiMenu } from 'react-icons/bi';
 import { setSelectedUser } from '../redux/userSlice.js';
 import Sidebar from './Sidebar.jsx';
+import { BASE_URL } from '../main.jsx';
 
 function MessageContainor() {
   const { selectedUser, authUser, onlineUsers } = useSelector(store => store.user);
@@ -19,6 +20,10 @@ function MessageContainor() {
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  const getImageUrl = (profilePhoto) => {
+    return `${BASE_URL}${profilePhoto}`;
   };
 
   return (
@@ -55,7 +60,7 @@ function MessageContainor() {
 
               <div className="relative w-12 h-12">
                 <img
-                  src={selectedUser?.profilePhoto}
+                  src={getImageUrl(selectedUser?.profilePhoto)}
                   alt="user-profile"
                   className="rounded-full ring ring-white/30 ring-offset-base-100 ring-offset-2 w-full h-full object-cover"
                 />
