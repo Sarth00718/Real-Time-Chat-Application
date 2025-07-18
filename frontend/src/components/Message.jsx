@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { BASE_URL } from '../main.jsx';
+
 const Message = ({ message }) => {
     const scroll = useRef();
     const { authUser, selectedUser } = useSelector(store => store.user);
@@ -86,7 +87,7 @@ const Message = ({ message }) => {
                     )}
                     {/* File Attachments */}
                     {message?.files?.length > 0 && message.files.map((file, index) => {
-                        const fileUrl = file; // ✅ Use as-is (already full Cloudinary URL)
+                        const fileUrl = file;
                         const isImage = /\.(png|jpe?g|gif|webp)$/i.test(file);
                         const originalFileName = file.split('/').pop();
 
