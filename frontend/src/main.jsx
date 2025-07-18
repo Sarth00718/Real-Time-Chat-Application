@@ -1,4 +1,4 @@
-// main.jsx
+
 import React from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -14,8 +14,7 @@ import axios from 'axios';
 let persistor = persistStore(store);
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = 'https://real-time-chat-application-hwsq.onrender.com';
-
+// axios.defaults.baseURL = 'https://real-time-chat-application-hwsq.onrender.com';
 export const BASE_URL = 'https://real-time-chat-application-hwsq.onrender.com'
 //export const BASE_URL = 'http://localhost:3000';
 

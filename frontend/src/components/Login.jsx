@@ -25,6 +25,7 @@ function Login() {
         },
         withCredentials: true
       });
+      localStorage.setItem('token', res.data.token);
       navigate('/');
       dispatch(setAuthUser(res.data));
       toast.success("Login successful!");

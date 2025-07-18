@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
-
+import { BASE_URL } from '../main.jsx';
 const Message = ({ message }) => {
     const scroll = useRef();
     const { authUser, selectedUser } = useSelector(store => store.user);
@@ -10,6 +10,10 @@ const Message = ({ message }) => {
     useEffect(() => {
         scroll.current?.scrollIntoView({ behavior: "smooth" });
     }, [message]);
+
+    const getImageUrl = (profilePhoto) => {
+        return `${BASE_URL}${profilePhoto}`;
+    };
 
     // Function to format timestamp
     const formatTime = (timestamp) => {
@@ -59,7 +63,7 @@ const Message = ({ message }) => {
                 <div className="w-8 h-8 rounded-full ring-1 ring-white/30">
                     <img
                         alt="User avatar"
-                        src={isOwnMessage ? authUser?.profilePhoto : selectedUser?.profilePhoto}
+                        src={getImageUrl(isOwnMessage ? authUser?.profilePhoto : selectedUser?.profilePhoto)}
                     />
                 </div>
             </div>
