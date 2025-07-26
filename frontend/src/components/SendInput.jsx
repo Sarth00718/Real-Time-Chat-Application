@@ -43,7 +43,9 @@ function SendInput() {
         `${BASE_URL}/api/v1/message/send/${selectedUser._id}`,
         formData,
         {
-          withCredentials: true,
+          withCredentials: true,headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
         }
       );
 
