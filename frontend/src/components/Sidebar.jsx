@@ -170,7 +170,7 @@ const Sidebar = () => {
                 className='btn btn-sm bg-blue-900 hover:bg-blue-600 text-white border-none mt-3 w-full flex items-center justify-center gap-2'
                 onClick={logoutHandler}
             >
-                <FiLogOut /> Logout
+                <FiLogOut/> Logout
             </button>
         </div>
     );
