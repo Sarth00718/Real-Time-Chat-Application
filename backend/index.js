@@ -1,4 +1,4 @@
-  import express from 'express';
+import express from 'express';
   import dotenv from 'dotenv';
   import connectDB  from './config/db.js';  
   import userRoutes from './routes/userRoutes.js'; 
@@ -23,12 +23,17 @@
   app.use(cookieParser());
   app.use('/images', express.static(path.join(__dirname, 'images')));
   app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-  const corsOption={
-      origin:'https://real-time-chat-application-two-smoky.vercel.app',
+  // CORS configuration for handling cookies and credentials
+  const corsOption = {
+    // For production
+    origin: 'https://real-time-chat-application-two-smoky.vercel.app',
+    // For development
     //origin: 'http://localhost:5173',
-      credentials:true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
   };
-  app.use(cors(corsOption)); 
+  app.use(cors(corsOption));
 
   // routes
   app.use("/api/v1/user", userRoutes);

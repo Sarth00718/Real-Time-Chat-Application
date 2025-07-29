@@ -10,6 +10,7 @@ const io = new Server(server, {
         //origin:['http://localhost:5173'],
         origin: ['https://real-time-chat-application-two-smoky.vercel.app'],
         methods:['GET', 'POST'],
+        credentials: true
     },
 });
 

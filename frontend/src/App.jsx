@@ -29,16 +29,30 @@ function App() {
 
     useEffect(() => {
         if (authUser) {
+            // Get token from localStorage for authentication
+            const token = localStorage.getItem('token');
+            
+            // Create socket connection with authentication
             const socketio = io(`${BASE_URL}`, {
                 query: {
                     userId: authUser._id
-                }
+                },
+                // Include auth token in handshake if available
+                auth: token ? { token } : undefined,
+                withCredentials: true // Enable cookies for socket connection
             });
+            
             dispatch(setSocket(socketio));
 
             socketio?.on('getOnlineUsers', (onlineUsers) => {
                 dispatch(setOnlineUsers(onlineUsers))
             });
+            
+            // Handle connection errors
+            socketio.on('connect_error', (err) => {
+                console.error('Socket connection error:', err.message);
+            });
+            
             return () => socketio.close();
         } else {
             if (socket) {
@@ -46,7 +60,6 @@ function App() {
                 dispatch(setSocket(null));
             }
         }
-
     }, [authUser]);
 
     return (

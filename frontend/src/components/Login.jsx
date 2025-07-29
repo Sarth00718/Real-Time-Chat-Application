@@ -23,9 +23,15 @@ function Login() {
         headers: {
           'Content-Type': 'application/json'
         },
-        withCredentials: true
+        withCredentials: true // This ensures cookies are sent/received
       });
-      localStorage.setItem('token', res.data.token);
+      
+      // Store token in localStorage for header-based auth
+      if (res.data.token) {
+        localStorage.setItem('token', res.data.token);
+      }
+      
+      // Navigate and update Redux state
       navigate('/');
       dispatch(setAuthUser(res.data));
       toast.success("Login successful!");
