@@ -1,6 +1,14 @@
+
 # 💬 MERN Chat Application
 
 A real-time chat application built with the **MERN stack** (MongoDB, Express.js, React.js, Node.js) and **Socket.IO** for seamless instant messaging and a responsive UI.
+
+---
+
+## 🌐 Live URLs
+
+- **Frontend:** [https://real-time-chat-application-two-smoky.vercel.app](https://real-time-chat-application-two-smoky.vercel.app)
+- **Backend:** [https://real-time-chat-application-hwsq.onrender.com](https://real-time-chat-application-hwsq.onrender.com)
 
 ---
 
@@ -53,47 +61,57 @@ A real-time chat application built with the **MERN stack** (MongoDB, Express.js,
 
 ## 🚀 Getting Started
 
-## ⚙️ Installation
+### ⚙️ Installation
 
-1. 📁 Clone the Repository
-   ```bash
-   git clone https://github.com/Sarth00718/CHAT-APP-MERN.git
-   cd CHAT-APP-MERN
+#### 1. 📁 Clone the Repository
+```bash
+git clone https://github.com/Sarth00718/CHAT-APP-MERN.git
+cd CHAT-APP-MERN
+```
 
-2. 🧱 Install Dependencies
-   ```bash
-   # Install backend dependencies
-   cd backend
-   npm install
+#### 2. 🧱 Install Dependencies
+```bash
+# Install backend dependencies
+cd backend
+npm install
 
-   # Install frontend dependencies
-   cd ../frontend
-   npm install
-   
-3. 🛠️ Configure Environment Variables
-   Create a .env file inside the backend/ directory and add:
-   ```env
-   PORT=3000
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret
+# Install frontend dependencies
+cd ../frontend
+npm install
+```
 
-4. ▶️ Run the Application
-   In two separate terminals:
-  # Terminal 1 - Start Backend
-    cd backend
-    npm run dev
-   # Terminal 2 - Start Frontend
-     cd frontend
-     npm run dev
+#### 3. 🛠️ Configure Environment Variables
+Create a `.env` file inside the backend/ directory and add:
+```env
+PORT=3000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+```
+
+#### 4. ▶️ Run the Application
+In two separate terminals:
+```bash
+# Terminal 1 - Start Backend
+cd backend
+npm run dev
+
+# Terminal 2 - Start Frontend
+cd frontend
+npm run dev
+```
+
 ---
 
 ## 📌 Notes
 
 - Make sure **MongoDB Atlas** is set up and your connection string is correct.
 - Ensure ports `5173` (frontend) and `3000` (backend) are free and not blocked by firewalls.
-- For localhost set below part in main.jsx -> backend url and index.js -> frontend url
-- **Frontend** runs on: [`http://localhost:5173`](http://localhost:5173)  
-- **Backend** runs on: [`http://localhost:3000`](http://localhost:3000)
+- For localhost set the appropriate URLs in:
+  - `main.jsx` → backend URL
+  - `index.js` → frontend origin
+
+- **Frontend runs on:** [`http://localhost:5173`](http://localhost:5173)  
+- **Backend runs on:** [`http://localhost:3000`](http://localhost:3000)
 
 ---
 
@@ -110,44 +128,52 @@ JWT tokens are used to secure endpoints.
 ---
 
 ## 📦 Sample `.env` File
-    #Set these
-    PORT=3000
-    MONGO_URI=mongodb+srv://your_username:your_password@cluster0.mongodb.net/chatapp
-    JWT_SECRET=supersecretkey123
-    
+```env
+PORT=3000
+MONGO_URI=mongodb+srv://your_username:your_password@cluster0.mongodb.net/chatapp
+JWT_SECRET=supersecretkey123
+```
+
+---
+
 ## 🛠️ Troubleshooting
 
-If you encounter any issues:
+### 1. **MongoDB Connection Errors**
+- Ensure your MongoDB Atlas cluster is running and accessible
+- Verify your connection string in the .env file uses `MONGO_URI`
+- Check network connectivity to MongoDB Atlas
 
-1. **MongoDB Connection Errors**:
-   - Ensure your MongoDB Atlas cluster is running and accessible
-   - Verify your connection string in the .env file uses MONGO_URI (not MONGODB_URI)
-   - Check network connectivity to MongoDB Atlas
+### 2. **JWT Authentication Issues**
+- Ensure your `JWT_SECRET` matches in code and `.env`
+- Clear browser cookies/localStorage if login fails
 
-2. **JWT Authentication Issues**:
-   - Ensure your JWT_SECRET in the .env file matches the one used in the code
-   - Clear your browser cookies and localStorage if you experience login issues
+### 3. **Socket.IO Connection Problems**
+- Ensure frontend and backend origins are set properly:
+  ```js
+  origin: ['https://real-time-chat-application-two-smoky.vercel.app', 'https://real-time-chat-application-hwsq.onrender.com']
+  ```
 
-3. **Socket.IO Connection Problems**:
-   - Verify that frontend URL in socket.js matches your actual frontend URL
-   - Check that ports 3000 (backend) and 5173 (frontend) are available and not blocked
+### 4. **CORS Errors**
+- Check if CORS middleware has the correct origins configured
 
-4. **CORS Errors**:
-   - The application has CORS configured in socket.js, ensure the origin URLs match your setup
+### 5. **Package Version Conflicts**
+- Run `npm install` in both frontend and backend directories to fix dependency issues
 
-5. **Package Version Conflicts**:
-   - If you encounter dependency issues, try running `npm install` again in both folders
+---
+
+## 👨‍💻 Developer
+
+**Sarth Narola**  
+📍 Surat, Gujarat, India  
+📧 sarthnarola007@gmail.com  
+🔗 [LinkedIn](https://www.linkedin.com/in/sarth-narola-223002323/)  
+💻 [GitHub](https://github.com/Sarth00718)
 
 ---
 
 ## 📄 License
 
-This project is open-source and available under the **MIT License**.
+This project is licensed under the **MIT License**.
 
 ---
 
-## 💡 Author
-
-Made with 💙 by **Sarth**  
-📧 [sarthnarola@chatapp.com](mailto:sarthnarola@chatapp.com)  
-🌐 Surat, Gujarat, India
