@@ -1,24 +1,47 @@
 import { User } from '../models/usermodel.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { validateUsername, validatePassword, sanitizeInput } from '../utils/validation.js';
 
 export const register = async (req, res) => {
 
     try {
-        const { fullName, username, password, confirmPassword, gender } = req.body;
+        let { fullName, username, password, confirmPassword, gender } = req.body;
+        
+        // Sanitize inputs
+        fullName = sanitizeInput(fullName);
+        username = sanitizeInput(username);
+        
         //alls fields are required
         if (!fullName || !username || !password || !confirmPassword || !gender) {
             return res.status(400).json({ message: "All fields are required" });
         }
+        
+        // Validate username format
+        if (!validateUsername(username)) {
+            return res.status(400).json({ 
+                message: "Username must be 3-20 characters and contain only letters, numbers, and underscores" 
+            });
+        }
+        
+        // Validate password strength
+        if (!validatePassword(password)) {
+            return res.status(400).json({ 
+                message: "Password must be at least 6 characters long" 
+            });
+        }
+        
         //password and confirm password must match
         if (password !== confirmPassword) {
             return res.status(400).json({ message: "Passwords do not match" });
         }
+        
         //check if user already exists
         const user = await User.findOne({ username });
         if (user) {
             return res.status(400).json({ message: "User already exists" });
         }
+        
         //hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -60,7 +83,10 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-        const { username, password } = req.body;
+        let { username, password } = req.body;
+        
+        // Sanitize input
+        username = sanitizeInput(username);
 
         //all fields are required
         if (!username || !password) {
@@ -70,13 +96,13 @@ export const login = async (req, res) => {
         //check if user exists
         const user = await User.findOne({ username });
         if (!user) {
-            return res.status(400).json({ message: "User does not exist", success: false });
+            return res.status(400).json({ message: "Invalid credentials", success: false });
         }
 
         //compare password
         const isValidPassword = await bcrypt.compare(password, user.password);
         if (!isValidPassword) {
-            return res.status(400).json({ message: "Invalid password", success: false });
+            return res.status(400).json({ message: "Invalid credentials", success: false });
         }
 
         const tokenData = {
@@ -85,11 +111,13 @@ export const login = async (req, res) => {
 
         const token = await jwt.sign(tokenData, process.env.JWT_SECRET, { expiresIn: '1d' });
 
+        const isProduction = process.env.NODE_ENV === 'production';
+
         return res.status(200).cookie("token", token, {
             maxAge: 24 * 60 * 60 * 1000,
             httpOnly: true,
-            secure: true, 
-            sameSite: 'None' 
+            secure: isProduction, 
+            sameSite: isProduction ? 'None' : 'Lax'
         }).json({
             _id: user._id,
             username: user.username,
@@ -109,13 +137,15 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
+        const isProduction = process.env.NODE_ENV === 'production';
+        
         // Clear the cookie by setting it to empty and expiring it
         return res.status(200)
             .cookie("token", "", {
                 maxAge: 0,
                 httpOnly: true,
-                secure: true,
-                sameSite: 'None',
+                secure: isProduction,
+                sameSite: isProduction ? 'None' : 'Lax',
                 path: '/'
             })
             .json({
@@ -136,12 +166,12 @@ export const getOtherUsers = async (req, res) => {
         const loggedInUserId = req.id;
         const otherUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
 
-        // Debug logging
-        console.log('Other users:', otherUsers);
-        console.log('First user profilePhoto:', otherUsers[0]?.profilePhoto);
-
         return res.status(200).json(otherUsers);
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return res.status(500).json({
+            message: "Internal server error",
+            success: false
+        });
     }
 }

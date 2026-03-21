@@ -8,4 +8,7 @@ const conversationSchema = new mongoose.Schema({
   messages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Message" }]
 }, { timestamps: true });
 
+// Compound index for faster participant queries
+conversationSchema.index({ participants: 1 });
+
 export const Conversation = mongoose.model("Conversation", conversationSchema);

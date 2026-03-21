@@ -3,12 +3,15 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   fullName: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   username: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    trim: true,
+    lowercase: true
   },
   password: {
     type: String,
@@ -24,5 +27,8 @@ const userSchema = new mongoose.Schema({
     required: true
   }
 },{timestamps: true});
+
+// Index for faster queries (unique already creates an index)
+userSchema.index({ username: 1 });
 
 export const User = mongoose.model("User", userSchema);

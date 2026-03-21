@@ -1,5 +1,5 @@
-
 import jwt from "jsonwebtoken";
+
 const isAuthenticated = async (req, res, next) => {
     try {
         // Get token from Authorization header (for localStorage) or cookies
@@ -21,10 +21,5 @@ const isAuthenticated = async (req, res, next) => {
         return res.status(401).json({ message: "Authentication failed" });
     }
 };
+
 export default isAuthenticated;
-
-const req = {
-    id: ""
-}
-
-req.id = "abcxyzoooooo"

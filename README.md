@@ -1,153 +1,161 @@
-# 💬 MERN Chat Application
+# Real-Time Chat Application
 
-A real-time chat application built with the **MERN stack** (MongoDB, Express.js, React.js, Node.js) and **Socket.IO** for seamless instant messaging and a responsive UI.
+A full-stack real-time chat application built with React, Node.js, Express, MongoDB, and Socket.IO.
 
----
+## Features
 
-## 🔧 Key Features
+- Real-time messaging with Socket.IO
+- User authentication with JWT
+- File sharing (images, documents, videos)
+- Online/offline user status
+- Profile avatars
+- Secure cookie-based authentication
 
-- ✅ Real-time messaging with WebSocket communication via Socket.IO  
-- ✅ Secure user authentication using JWT (JSON Web Tokens)  
-- ✅ Typing indicators, timestamps, and read receipts  
-- ✅ Clean, responsive UI built with Tailwind CSS  
-- ✅ Global state management using Redux Toolkit  
+## Tech Stack
 
----
+### Frontend
+- React 18
+- Redux Toolkit for state management
+- Socket.IO Client
+- Axios for API calls
+- TailwindCSS + DaisyUI for styling
+- Vite for build tooling
 
-## 🧠 Tech Stack
+### Backend
+- Node.js + Express
+- MongoDB with Mongoose
+- Socket.IO for real-time communication
+- JWT for authentication
+- Cloudinary for file storage
+- Multer for file uploads
 
-### 🔹 Frontend
-- React.js  
-- Redux Toolkit  
-- Tailwind CSS  
-- Socket.IO Client  
+## Prerequisites
 
-### 🔹 Backend
-- Node.js  
-- Express.js  
-- Socket.IO Server  
-- MongoDB (via Mongoose)  
+- Node.js (v16 or higher)
+- MongoDB (local or Atlas)
+- Cloudinary account (for file uploads)
 
-### 🔹 Authentication
-- JSON Web Tokens (JWT)  
+## Installation
 
-### 🔹 Database
-- MongoDB Atlas  
+### 1. Clone the repository
+```bash
+git clone <repository-url>
+cd <project-folder>
+```
 
----
+### 2. Backend Setup
+```bash
+cd backend
+npm install
+```
 
-## 📦 How It Works
+Create a `.env` file in the backend directory (use `.env.example` as template):
+```env
+PORT=3000
+NODE_ENV=development
+MONGODB_URI=mongodb://localhost:27017
+JWT_SECRET=your_strong_secret_key
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+FRONTEND_URL=http://localhost:5173
+```
 
-1. **Backend handles:**
-   - User authentication and session management  
-   - Real-time WebSocket connections  
-   - Message storage and retrieval  
+### 3. Frontend Setup
+```bash
+cd frontend
+npm install
+```
 
-2. **Frontend connects via:**
-   - REST APIs for login, registration, and fetching messages  
-   - Socket.IO client for real-time data exchange  
+Create a `.env` file in the frontend directory:
+```env
+VITE_BASE_URL=http://localhost:3000
+```
 
-3. **MongoDB** stores all user and message data and syncs it on login or refresh.  
+## Running the Application
 
----
+### Development Mode
 
-## 🚀 Getting Started
+1. Start MongoDB (if running locally)
+```bash
+mongod
+```
 
-## ⚙️ Installation
+2. Start the backend server
+```bash
+cd backend
+npm run dev
+```
 
-1. 📁 Clone the Repository
-   ```bash
-   git clone https://github.com/Sarth00718/CHAT-APP-MERN.git
-   cd CHAT-APP-MERN
+3. Start the frontend development server
+```bash
+cd frontend
+npm run dev
+```
 
-2. 🧱 Install Dependencies
-   ```bash
-   # Install backend dependencies
-   cd backend
-   npm install
+The application will be available at:
+- Frontend: http://localhost:5173
+- Backend: http://localhost:3000
 
-   # Install frontend dependencies
-   cd ../frontend
-   npm install
-   
-3. 🛠️ Configure Environment Variables
-   Create a .env file inside the backend/ directory and add:
-   ```env
-   PORT=3000
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret
+## Production Deployment
 
-4. ▶️ Run the Application
-   In two separate terminals:
-  # Terminal 1 - Start Backend
-    cd backend
-    npm run dev
-   # Terminal 2 - Start Frontend
-     cd frontend
-     npm run dev
----
+### Backend
+1. Set `NODE_ENV=production` in your environment
+2. Update CORS origins in the code to match your production frontend URL
+3. Use a production MongoDB instance (MongoDB Atlas recommended)
+4. Set strong JWT_SECRET
+5. Run: `npm start`
 
-## 📌 Notes
+### Frontend
+1. Update `VITE_BASE_URL` to your production backend URL
+2. Build: `npm run build`
+3. Deploy the `dist` folder to your hosting service
 
-- Make sure **MongoDB Atlas** is set up and your connection string is correct.
-- Ensure ports `5173` (frontend) and `3000` (backend) are free and not blocked by firewalls.
-- For localhost set below part in main.jsx -> backend url and index.js -> frontend url
-- **Frontend** runs on: [`http://localhost:5173`](http://localhost:5173)  
-- **Backend** runs on: [`http://localhost:3000`](http://localhost:3000)
+## API Endpoints
 
----
+### Authentication
+- `POST /api/v1/user/register` - Register new user
+- `POST /api/v1/user/login` - Login user
+- `GET /api/v1/user/logout` - Logout user
+- `GET /api/v1/user/` - Get other users (authenticated)
 
-## 🔒 Authentication
+### Messages
+- `POST /api/v1/message/send/:id` - Send message to user
+- `GET /api/v1/message/:id` - Get messages with user
 
-JWT tokens are used to secure endpoints.
+### Health Check
+- `GET /health` - Server health status
 
-**Auth flow:**
+## Security Features
 
-1. User signs up or logs in.  
-2. Server returns a signed JWT.  
-3. JWT is stored in `localStorage` and sent with future requests.
+- HTTP-only cookies for JWT tokens
+- Password hashing with bcrypt
+- CORS configuration
+- File type validation
+- File size limits (10MB per file, max 5 files)
+- Environment-based security settings
 
----
+## Project Structure
 
-## 📦 Sample `.env` File
-    #Set these
-    PORT=3000
-    MONGO_URI=mongodb+srv://your_username:your_password@cluster0.mongodb.net/chatapp
-    JWT_SECRET=supersecretkey123
-    
-## 🛠️ Troubleshooting
+```
+├── backend/
+│   ├── config/          # Database and Cloudinary config
+│   ├── controllers/     # Route controllers
+│   ├── middlewares/     # Auth and file upload middlewares
+│   ├── models/          # Mongoose models
+│   ├── routes/          # API routes
+│   ├── socket/          # Socket.IO configuration
+│   └── index.js         # Entry point
+├── frontend/
+│   ├── src/
+│   │   ├── components/  # React components
+│   │   ├── hook/        # Custom hooks
+│   │   ├── redux/       # Redux store and slices
+│   │   └── main.jsx     # Entry point
+│   └── public/          # Static assets
+└── README.md
+```
 
-If you encounter any issues:
+## License
 
-1. **MongoDB Connection Errors**:
-   - Ensure your MongoDB Atlas cluster is running and accessible
-   - Verify your connection string in the .env file uses MONGO_URI (not MONGODB_URI)
-   - Check network connectivity to MongoDB Atlas
-
-2. **JWT Authentication Issues**:
-   - Ensure your JWT_SECRET in the .env file matches the one used in the code
-   - Clear your browser cookies and localStorage if you experience login issues
-
-3. **Socket.IO Connection Problems**:
-   - Verify that frontend URL in socket.js matches your actual frontend URL
-   - Check that ports 3000 (backend) and 5173 (frontend) are available and not blocked
-
-4. **CORS Errors**:
-   - The application has CORS configured in socket.js, ensure the origin URLs match your setup
-
-5. **Package Version Conflicts**:
-   - If you encounter dependency issues, try running `npm install` again in both folders
-
----
-
-## 📄 License
-
-This project is open-source and available under the **MIT License**.
-
----
-
-## 💡 Author
-
-Made with 💙 by **Sarth**  
-📧 [sarthnarola@chatapp.com](mailto:sarthnarola@chatapp.com)  
-🌐 Surat, Gujarat, India
+ISC
