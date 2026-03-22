@@ -6,20 +6,56 @@ const isAuthenticated = async (req, res, next) => {
         const token = req.headers.authorization?.split(" ")[1] || req.cookies.token;
         
         if (!token) {
-            return res.status(401).json({ message: "User not authenticated." });
+            return res.status(401).json({ 
+                success: false,
+                message: "User not authenticated. Please login." 
+            });
         }
         
-        const decode = await jwt.verify(token, process.env.JWT_SECRET);
-        if (!decode) {
-            return res.status(401).json({ message: "Invalid token" });
+        // Verify token with proper error handling
+        const decode = jwt.verify(token, process.env.JWT_SECRET, {
+            algorithms: ['HS256'],
+            maxAge: process.env.JWT_EXPIRES_IN || '7d'
+        });
+        
+        if (!decode || !decode.userId) {
+            return res.status(401).json({ 
+                success: false,
+                message: "Invalid token" 
+            });
         }
         
+        // Attach user ID to request
         req.id = decode.userId;
+        req.tokenIat = decode.iat;
+        
         next();
     } catch (error) {
-        console.log(error);
-        return res.status(401).json({ message: "Authentication failed" });
+        console.error('Authentication error:', error.message);
+        
+        // Handle specific JWT errors
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ 
+                success: false,
+                message: "Token expired. Please login again.",
+                code: 'TOKEN_EXPIRED'
+            });
+        }
+        
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ 
+                success: false,
+                message: "Invalid token. Please login again.",
+                code: 'INVALID_TOKEN'
+            });
+        }
+        
+        return res.status(401).json({ 
+            success: false,
+            message: "Authentication failed" 
+        });
     }
 };
 
+export { isAuthenticated };
 export default isAuthenticated;

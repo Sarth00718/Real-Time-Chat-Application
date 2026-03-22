@@ -12,7 +12,7 @@ frontend/.env
 
 # Uploads
 backend/uploads/
-uploads/
+uploads/ 
 
 # Logs
 logs/

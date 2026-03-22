@@ -1,47 +1,41 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-hot-toast';
-import { BASE_URL } from '../main';
+import { useAuth } from '../contexts/AuthContext';
 
 function Signup() {
   const [user, setUser] = useState({
-    fullName: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-    gender: ""
+    fullName: '',
+    username: '',
+    password: '',
+    confirmPassword: '',
+    gender: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { register } = useAuth();
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    try {
-      const res = await axios.post(`${BASE_URL}/api/v1/user/register`, user, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true
-      });
-      if (res.data.success) {
-        navigate("/Login");
-        toast.success(res.data.message);
-      }
-    } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || "Something went wrong!";
-      toast.error(message);
-    }
+    setIsLoading(true);
 
-    // Reset form
-    setUser({
-      fullName: "",
-      username: "",
-      password: "",
-      confirmPassword: "",
-      gender: ""
-    });
+    const result = await register(user);
+    
+    setIsLoading(false);
+
+    if (result.success) {
+      // Redirect to homepage instead of login
+      navigate('/');
+    } else {
+      // Reset form only on error
+      setUser({
+        fullName: '',
+        username: '',
+        password: '',
+        confirmPassword: '',
+        gender: ''
+      });
+    }
   };
 
   const handleRadio = (e) => {
@@ -64,6 +58,7 @@ function Signup() {
               value={user.fullName}
               onChange={(e) => setUser({ ...user, fullName: e.target.value })}
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -78,6 +73,7 @@ function Signup() {
               value={user.username}
               onChange={(e) => setUser({ ...user, username: e.target.value })}
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -92,6 +88,7 @@ function Signup() {
               value={user.password}
               onChange={(e) => setUser({ ...user, password: e.target.value })}
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -106,6 +103,7 @@ function Signup() {
               value={user.confirmPassword}
               onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })}
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -118,8 +116,9 @@ function Signup() {
                 name="gender"
                 value="male"
                 onChange={handleRadio}
-                checked={user.gender === "male"}
+                checked={user.gender === 'male'}
                 required
+                disabled={isLoading}
               />
               Male
             </label>
@@ -129,7 +128,8 @@ function Signup() {
                 name="gender"
                 value="female"
                 onChange={handleRadio}
-                checked={user.gender === "female"}
+                checked={user.gender === 'female'}
+                disabled={isLoading}
               />
               Female
             </label>
@@ -138,16 +138,17 @@ function Signup() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 transition text-white font-semibold py-2 rounded-lg"
+            disabled={isLoading}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition text-white font-semibold py-2 rounded-lg"
           >
-            Sign Up
+            {isLoading ? 'Signing up...' : 'Sign Up'}
           </button>
         </form>
 
         {/* Login Link */}
         <p className="mt-4 text-center text-white text-sm sm:text-base">
-          Already have an account?{" "}
-          <Link to="/Login" className="text-pink-300 hover:underline">
+          Already have an account?{' '}
+          <Link to="/login" className="text-pink-300 hover:underline">
             Login
           </Link>
         </p>

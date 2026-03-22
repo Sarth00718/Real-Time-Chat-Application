@@ -1,17 +1,14 @@
-import cloudinary from "../config/cloudinary.js";
-import { Conversation } from "../models/conversationmodel.js";
-import { Message } from "../models/messagemodel.js";
-import { getRecieverSocketId, io } from "../socket/socket.js"
+import { getRecieverSocketId, io } from "../socket/socket.js";
 import { validateObjectId, sanitizeInput } from "../utils/validation.js";
-import fs from "fs";
+import messageService from "../services/messageService.js";
 
 export const sendMessage = async (req, res) => {
     try {
         const senderId = req.id;
         const receiverId = req.params.id;
-        let { message } = req.body;
+        let { message, replyToId } = req.body;
         
-        // Validate ObjectIds
+        // Validate receiver ID
         if (!validateObjectId(receiverId)) {
             return res.status(400).json({ error: "Invalid receiver ID" });
         }
@@ -21,54 +18,37 @@ export const sendMessage = async (req, res) => {
             message = sanitizeInput(message);
         }
 
-        // Create or fetch conversation
-        let gotConversation = await Conversation.findOne({
-            participants: { $all: [senderId, receiverId] },
-        });
-
-        if (!gotConversation) {
-            gotConversation = await Conversation.create({
-                participants: [senderId, receiverId],
-            });
-        }
+        // Get or create conversation
+        const conversation = await messageService.getOrCreateConversation(senderId, receiverId);
 
         // Upload files to Cloudinary
-        let files = [];
-        if (req.files && req.files.length > 0) {
-            const uploadPromises = req.files.map(async (file) => {
-                try {
-                    const result = await cloudinary.uploader.upload(file.path, {
-                        resource_type: "auto",
-                        folder: "chat-app",
-                    });
-                    fs.unlinkSync(file.path); // delete temp file
-                    return result.secure_url;
-                } catch (error) {
-                    console.error("File upload error:", error);
-                    if (fs.existsSync(file.path)) {
-                        fs.unlinkSync(file.path);
-                    }
-                    return null;
-                }
-            });
+        const fileUrls = await messageService.uploadFiles(req.files);
 
-            files = (await Promise.all(uploadPromises)).filter(url => url !== null);
+        // Handle reply
+        let replyTo = null;
+        if (replyToId && validateObjectId(replyToId)) {
+            const { Message } = await import("../models/messagemodel.js");
+            const replyMessage = await Message.findById(replyToId);
+            if (replyMessage) {
+                replyTo = {
+                    messageId: replyMessage._id,
+                    senderId: replyMessage.senderId,
+                    message: replyMessage.message,
+                    messageType: replyMessage.messageType
+                };
+            }
         }
 
-        // Store in DB
-        const newMessage = await Message.create({
-            senderId,
-            receiverId,
-            message: message || '',
-            files
-        });
+        // Create message with reply
+        const newMessage = await messageService.createMessage(senderId, receiverId, message, fileUrls, replyTo);
 
-        gotConversation.messages.push(newMessage._id);
-        await Promise.all([gotConversation.save(), newMessage.save()]);
+        // Add message to conversation
+        await messageService.addMessageToConversation(conversation._id, newMessage._id);
 
-        const recieverSocketId = getRecieverSocketId(receiverId);
-        if (recieverSocketId) {
-            io.to(recieverSocketId).emit('newMessage', newMessage);
+        // Emit socket event to receiver
+        const receiverSocketId = getRecieverSocketId(receiverId);
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit('newMessage', newMessage);
         }
 
         return res.status(200).json({ newMessage });
@@ -83,15 +63,15 @@ export const getMessage = async (req, res) => {
         const receiverId = req.params.id;
         const senderId = req.id;
         
-        // Validate ObjectId
+        // Validate receiver ID
         if (!validateObjectId(receiverId)) {
             return res.status(400).json({ error: "Invalid receiver ID" });
         }
         
-        const conversation = await Conversation.findOne({
-            participants: { $all: [senderId, receiverId] }
-        }).populate("messages");
-        return res.status(200).json(conversation?.messages || []);
+        // Get messages
+        const messages = await messageService.getMessages(senderId, receiverId);
+        
+        return res.status(200).json(messages);
     } catch (error) {
         console.error(error);
         return res.status(500).json({

@@ -1,18 +1,19 @@
-import React from 'react'
-import MessageContainor from './MessageContainor.jsx'
-import Sidebar from './Sidebar.jsx'
-import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react';
+import MessageContainor from './MessageContainor.jsx';
+import Sidebar from './Sidebar.jsx';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 function Homepage() {
-  const { authUser } = useSelector(store => store.user);
+  const { authUser } = useAuth();
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!authUser) {
-      navigate("/login");
+      navigate('/login');
     }
-  }, []);
+  }, [authUser, navigate]);
+
   return (
     <div className='min-h-screen w-full flex items-center justify-center p-3 sm:p-5'>
       <div 
@@ -30,7 +31,7 @@ function Homepage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Homepage
+export default Homepage;

@@ -1,72 +1,42 @@
-// App.jsx
-import React, { useEffect, useState } from 'react';
-import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
+import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements, Navigate } from 'react-router-dom';
 import Layout from './Layout';
 import Login from './components/Login.jsx';
 import Signup from './components/Signup.jsx';
 import Homepage from './components/Homepage.jsx';
-import { Toaster } from 'react-hot-toast';
-import { useSelector, useDispatch } from 'react-redux';
-import io from 'socket.io-client';
-import { setOnlineUsers } from './redux/userSlice';
-import { setSocket } from './redux/socketSlice';
-import { BASE_URL } from './main.jsx';
+import { useAuth } from './contexts/AuthContext';
 
 function App() {
-    const { authUser } = useSelector(store => store.user);
-    const { socket } = useSelector(store => store.socket);
-    const dispatch = useDispatch();
+  const { authUser, loading } = useAuth();
 
-    const router = createBrowserRouter(
-        createRoutesFromElements(
-            <Route path="/" element={<Layout />}>
-                <Route index element={authUser ? <Homepage /> : <Login />} />
-                <Route path="login" element={<Login />} />
-                <Route path="signup" element={<Signup />} />
-            </Route>
-        )
-    );
-
-    useEffect(() => {
-        if (authUser) {
-            // Get token from localStorage for authentication
-            const token = localStorage.getItem('token');
-            
-            // Create socket connection with authentication
-            const socketio = io(`${BASE_URL}`, {
-                query: {
-                    userId: authUser._id
-                },
-                // Include auth token in handshake if available
-                auth: token ? { token } : undefined,
-                withCredentials: true // Enable cookies for socket connection
-            });
-            
-            dispatch(setSocket(socketio));
-
-            socketio?.on('getOnlineUsers', (onlineUsers) => {
-                dispatch(setOnlineUsers(onlineUsers))
-            });
-            
-            // Handle connection errors
-            socketio.on('connect_error', (err) => {
-                console.error('Socket connection error:', err.message);
-            });
-            
-            return () => socketio.close();
-        } else {
-            if (socket) {
-                socket.close();
-                dispatch(setSocket(null));
-            }
-        }
-    }, [authUser]);
-
+  // Show loading state while checking authentication
+  if (loading) {
     return (
-        <>
-            <RouterProvider router={router} />
-            <Toaster />
-        </>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
     );
+  }
+
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route path="/" element={<Layout />}>
+        <Route 
+          index 
+          element={authUser ? <Homepage /> : <Navigate to="/login" replace />} 
+        />
+        <Route 
+          path="login" 
+          element={authUser ? <Navigate to="/" replace /> : <Login />} 
+        />
+        <Route 
+          path="signup" 
+          element={authUser ? <Navigate to="/" replace /> : <Signup />} 
+        />
+      </Route>
+    )
+  );
+
+  return <RouterProvider router={router} />;
 }
+
 export default App;

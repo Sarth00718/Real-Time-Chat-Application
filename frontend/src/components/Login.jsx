@@ -1,10 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
-import { setAuthUser } from '../redux/userSlice.js';
-import { BASE_URL } from '../main';
+import { useAuth } from '../contexts/AuthContext';
 import { FiUser, FiLock, FiLogIn } from 'react-icons/fi';
 
 function Login() {
@@ -12,48 +8,34 @@ function Login() {
     username: '',
     password: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { login } = useAuth();
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    try {
-      const res = await axios.post(`${BASE_URL}/api/v1/user/login`, user, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true // This ensures cookies are sent/received
-      });
-      
-      // Store token in localStorage for header-based auth
-      if (res.data.token) {
-        localStorage.setItem('token', res.data.token);
-      }
-      
-      // Navigate and update Redux state
+    setIsLoading(true);
+
+    const result = await login(user);
+    
+    setIsLoading(false);
+
+    if (result.success) {
       navigate('/');
-      dispatch(setAuthUser(res.data));
-      toast.success("Login successful!");
-    } catch (error) {
-      console.log("Error:", error);
-      toast.error(error?.response?.data?.message || "Login failed. Please try again.");
-    } 
+    }
+
     setUser({
-      username: "",
-      password: ""
-    })
+      username: '',
+      password: ''
+    });
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div
-        className="w-full max-w-md p-8 rounded-2xl backdrop-blur-lg bg-white/10 border border-white/30 shadow-2xl"
-      >
+      <div className="w-full max-w-md p-8 rounded-2xl backdrop-blur-lg bg-white/10 border border-white/30 shadow-2xl">
         <div className="flex flex-col items-center mb-8">
-          <div
-            className="w-20 h-20 rounded-full bg-blue-500 flex items-center justify-center mb-4"
-          >
+          <div className="w-20 h-20 rounded-full bg-blue-500 flex items-center justify-center mb-4">
             <FiUser className="text-white text-3xl" />
           </div>
           <h1 className="font-bold text-3xl bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-200">
@@ -76,6 +58,7 @@ function Login() {
               value={user.username}
               onChange={(e) => setUser({ ...user, username: e.target.value })}
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -92,22 +75,33 @@ function Login() {
               value={user.password}
               onChange={(e) => setUser({ ...user, password: e.target.value })}
               required
+              disabled={isLoading}
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 
+            disabled={isLoading}
+            className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-400 disabled:cursor-not-allowed
               text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2"
           >
+            {isLoading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Signing in...
+              </>
+            ) : (
+              <>
                 <FiLogIn /> Sign In
+              </>
+            )}
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-gray-300">
             Don't have an account?{' '}
-            <Link to="/Signup" className="text-purple-300 hover:text-white transition-colors">
+            <Link to="/signup" className="text-purple-300 hover:text-white transition-colors">
               Sign Up
             </Link>
           </p>

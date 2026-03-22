@@ -1,32 +1,32 @@
-
-import React from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Provider } from 'react-redux';
-import store from './redux/store';
+import { AppProvider } from './contexts/AppProvider';
 import App from './App';
-import { Toaster } from "react-hot-toast";
+import { Toaster } from 'react-hot-toast';
+import ErrorBoundary from './components/ErrorBoundary';
 import './index.css';
-import { PersistGate } from 'redux-persist/integration/react'
-import { persistStore } from 'redux-persist';
 import axios from 'axios';
 
-let persistor = persistStore(store);
-
+// Configure axios defaults
 axios.defaults.withCredentials = true;
-// axios.defaults.baseURL = 'https://real-time-chat-application-hwsq.onrender.com';
-export const BASE_URL = 'https://real-time-chat-application-hwsq.onrender.com'
-//export const BASE_URL = 'http://localhost:3001';
-
 
 const root = createRoot(document.getElementById('root'));
 root.render(
   <StrictMode>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
+    <ErrorBoundary>
+      <AppProvider>
         <App />
-        <Toaster />
-      </PersistGate>
-    </Provider>
+        <Toaster 
+          position="top-center"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+          }}
+        />
+      </AppProvider>
+    </ErrorBoundary>
   </StrictMode>
 );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import OfflineAlert from './components/OfflineAlert';
 
 function Layout() {
   const location = useLocation();
@@ -15,6 +16,7 @@ function Layout() {
         backgroundBlendMode: 'overlay',
       }}
     >
+      <OfflineAlert />
       <div className="w-full min-h-screen">
         <Outlet />
       </div>

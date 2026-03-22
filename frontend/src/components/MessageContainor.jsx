@@ -1,29 +1,33 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Messages from './Messages.jsx';
 import SendInput from './SendInput.jsx';
-import { useSelector, useDispatch } from 'react-redux';
 import { BiArrowBack, BiMenu } from 'react-icons/bi';
-import { setSelectedUser } from '../redux/userSlice.js';
+import { IoSparkles } from 'react-icons/io5';
+import { HiUserGroup } from 'react-icons/hi';
 import Sidebar from './Sidebar.jsx';
-import { BASE_URL } from '../main.jsx';
+import ThemeToggle from './ThemeToggle.jsx';
+import AIChat from './AIChat.jsx';
+import { useAuth } from '../contexts/AuthContext';
+import { useUser } from '../contexts/UserContext';
+import { getImageUrl } from '../utils/imageUtils';
 
 function MessageContainor() {
-  const { selectedUser, authUser, onlineUsers } = useSelector(store => store.user);
-  const dispatch = useDispatch();
+  const { authUser } = useAuth();
+  const { selectedUser, setSelectedUser, selectedGroup, setSelectedGroup, onlineUsers } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showAIChat, setShowAIChat] = useState(false);
 
   const isOnline = onlineUsers?.includes(selectedUser?._id) ?? false;
+  const currentChat = selectedGroup || selectedUser;
+  const isGroupChat = !!selectedGroup;
 
   const handleBack = () => {
-    dispatch(setSelectedUser(null));
+    setSelectedUser(null);
+    setSelectedGroup(null);
   };
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
-  };
-
-  const getImageUrl = (profilePhoto) => {
-    return `${BASE_URL}${profilePhoto}`;
   };
 
   return (
@@ -48,8 +52,12 @@ function MessageContainor() {
 
       {/* Main Chat Section */}
       <div className="flex flex-col flex-1 h-full min-h-0 w-full bg-blue-500/40 md:rounded-none">
+        {/* AI Chat Modal */}
+        {showAIChat && (
+          <AIChat onClose={() => setShowAIChat(false)} />
+        )}
 
-        {selectedUser ? (
+        {currentChat ? (
           <>
             {/* Chat Header */}
             <div className="flex items-center gap-3 bg-blue-900/40 p-3 border-b border-white/20">
@@ -59,22 +67,55 @@ function MessageContainor() {
               </button>
 
               <div className="relative w-12 h-12">
-                <img
-                  src={getImageUrl(selectedUser?.profilePhoto)}
-                  alt="user-profile"
-                  className="rounded-full ring ring-white/30 ring-offset-base-100 ring-offset-2 w-full h-full object-cover"
-                />
-                {isOnline && (
-                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-white"></span>
+                {isGroupChat ? (
+                  group.groupPhoto ? (
+                    <img
+                      src={getImageUrl(currentChat?.groupPhoto)}
+                      alt="group-profile"
+                      className="rounded-full ring ring-white/30 ring-offset-base-100 ring-offset-2 w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="rounded-full ring ring-white/30 ring-offset-base-100 ring-offset-2 w-full h-full bg-blue-500 flex items-center justify-center">
+                      <HiUserGroup className="w-6 h-6 text-white" />
+                    </div>
+                  )
+                ) : (
+                  <>
+                    <img
+                      src={getImageUrl(currentChat?.profilePhoto)}
+                      alt="chat-profile"
+                      className="rounded-full ring ring-white/30 ring-offset-base-100 ring-offset-2 w-full h-full object-cover"
+                    />
+                    {isOnline && (
+                      <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-white"></span>
+                    )}
+                  </>
                 )}
               </div>
 
               <div className="flex-1">
-                <p className="text-white font-semibold">{selectedUser?.fullName}</p>
+                <p className="text-white font-semibold">
+                  {isGroupChat ? currentChat?.name : currentChat?.fullName}
+                </p>
                 <p className="text-xs text-gray-300">
-                  {selectedUser?.username}
+                  {isGroupChat 
+                    ? `${currentChat?.members?.length || 0} members` 
+                    : currentChat?.username
+                  }
                 </p>
               </div>
+
+              {/* AI Assistant Button */}
+              <button
+                onClick={() => setShowAIChat(true)}
+                className="p-2 hover:bg-blue-700 rounded-lg transition text-white"
+                title="AI Assistant"
+              >
+                <IoSparkles className="w-6 h-6" />
+              </button>
+
+              {/* Theme Toggle */}
+              <ThemeToggle />
 
               {/* Back Button */}
               <button
@@ -99,6 +140,15 @@ function MessageContainor() {
               onClick={toggleSidebar}
             >
               <BiMenu size={24} />
+            </button>
+
+            {/* AI Assistant Button - Top Right */}
+            <button
+              onClick={() => setShowAIChat(true)}
+              className="absolute top-4 right-4 p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition flex items-center gap-2"
+              title="AI Assistant"
+            >
+              <IoSparkles className="w-6 h-6" />
             </button>
 
             <div className="bg-white/10 backdrop-blur-md p-8 rounded-2xl max-w-md w-full">

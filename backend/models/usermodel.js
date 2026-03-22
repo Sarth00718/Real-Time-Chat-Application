@@ -25,10 +25,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["male", "female", "other"],
     required: true
+  },
+  lastSeen: {
+    type: Date,
+    default: Date.now
+  },
+  isOnline: {
+    type: Boolean,
+    default: false
   }
 },{timestamps: true});
 
-// Index for faster queries (unique already creates an index)
-userSchema.index({ username: 1 });
+// Note: unique: true on username already creates an index, so no need for explicit index
 
 export const User = mongoose.model("User", userSchema);
