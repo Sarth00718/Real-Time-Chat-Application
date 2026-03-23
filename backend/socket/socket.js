@@ -9,7 +9,11 @@ const app = express();
 const server = http.createServer(app);
 
 const allowedOrigins = process.env.NODE_ENV === 'production'
-    ? ['https://real-time-chat-application-two-smoky.vercel.app']
+    ? [
+        'https://real-time-chat-application-eosin.vercel.app',
+        'https://real-time-chat-application-two-smoky.vercel.app',
+        process.env.FRONTEND_URL
+      ].filter(Boolean)
     : ['http://localhost:5173', 'http://localhost:5174'];
 
 const io = new Server(server, {
@@ -18,6 +22,9 @@ const io = new Server(server, {
         methods:['GET', 'POST'],
         credentials: true
     },
+    transports: ['websocket', 'polling'],
+    pingTimeout: 60000,
+    pingInterval: 25000
 });
 
 export const getRecieverSocketId = (receiverId)=>{

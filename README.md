@@ -31,10 +31,16 @@ A production-ready real-time chat application featuring **WebSocket-based instan
 
 ## 🌐 Live Deployment
 
-| Service | URL |
-|---------|-----|
-| 🌐 Frontend | [https://real-time-chat-application-two-smoky.vercel.app](https://real-time-chat-application-two-smoky.vercel.app) |
-| 🔧 Backend API | [https://real-time-chat-application-hwsq.onrender.com](https://real-time-chat-application-hwsq.onrender.com) |
+| Service | URL | Status |
+|---------|-----|--------|
+| 🌐 Frontend | [Vercel Deployment](https://real-time-chat-application-eosin.vercel.app) | ✅ Live |
+| 🔧 Backend API | [Render Deployment](https://real-time-chat-application-hwsq.onrender.com) | ✅ Live |
+
+> **Note**: Backend on Render free tier may take 30-60 seconds to wake up from sleep on first request.
+
+### Quick Links
+- 📚 [Deployment Guide](./DEPLOYMENT.md) - Complete deployment instructions
+- ✅ [Deployment Checklist](./DEPLOYMENT_CHECKLIST.md) - Step-by-step checklist
 
 ## 🎥 Demo & Screenshots
 

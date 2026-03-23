@@ -1,22 +1,9 @@
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
 
-const uploadDir = 'uploads';
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-}
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, uploadDir),
-    filename: (req, file, cb) => {
-        // Generate unique filename with timestamp
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname);
-        const nameWithoutExt = path.basename(file.originalname, ext);
-        cb(null, `${nameWithoutExt}-${uniqueSuffix}${ext}`);
-    },
-});
+// Use memory storage for cloud deployments (Render, Heroku, etc.)
+// Files are stored in memory as Buffer objects
+const storage = multer.memoryStorage();
 
 // File filter to validate file types
 const fileFilter = (req, file, cb) => {
@@ -40,13 +27,18 @@ const fileFilter = (req, file, cb) => {
         'video/quicktime',
         // Archives
         'application/zip',
-        'application/x-rar-compressed'
+        'application/x-rar-compressed',
+        // Audio
+        'audio/mpeg',
+        'audio/wav',
+        'audio/webm',
+        'audio/ogg'
     ];
 
     if (allowedMimeTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error(`Invalid file type: ${file.mimetype}. Only images, documents, videos, and archives are allowed.`), false);
+        cb(new Error(`Invalid file type: ${file.mimetype}. Only images, documents, videos, audio, and archives are allowed.`), false);
     }
 };
 
@@ -74,6 +66,22 @@ export const upload = multer({
         }
     }
 });
+
+// Voice message upload
+export const uploadVoice = multer({
+    storage,
+    limits: { 
+        fileSize: 5 * 1024 * 1024 // 5MB limit for voice messages
+    },
+    fileFilter: (req, file, cb) => {
+        const allowedAudioTypes = ['audio/mpeg', 'audio/wav', 'audio/webm', 'audio/ogg'];
+        if (allowedAudioTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type. Only audio files are allowed.'), false);
+        }
+    }
+}).single('voice');
 
 // Error handling middleware for multer
 export const handleMulterError = (err, req, res, next) => {

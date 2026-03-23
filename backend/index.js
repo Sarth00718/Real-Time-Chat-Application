@@ -54,20 +54,32 @@ dotenv.config();
   
   // CORS configuration for handling cookies and credentials
   const allowedOrigins = process.env.NODE_ENV === 'production' 
-    ? ['https://real-time-chat-application-two-smoky.vercel.app']
+    ? [
+        'https://real-time-chat-application-eosin.vercel.app',
+        'https://real-time-chat-application-two-smoky.vercel.app',
+        process.env.FRONTEND_URL
+      ].filter(Boolean)
     : ['http://localhost:5173', 'http://localhost:5174'];
 
   const corsOption = {
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests with no origin (mobile apps, Postman, etc.)
+      if (!origin) {
+        return callback(null, true);
+      }
+      
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.warn(`CORS blocked origin: ${origin}`);
         callback(new Error('Not allowed by CORS'));
       }
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Set-Cookie'],
+    maxAge: 86400 // 24 hours
   };
   app.use(cors(corsOption));
 
@@ -87,24 +99,8 @@ dotenv.config();
   app.use("/api/v1/message", voiceMessageRoutes);
 
   // Health check endpoint
-  app.get('/health', async (req, res) => {
-    try {
-      // Check database connection
-      const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
-      
-      res.status(200).json({ 
-        status: 'OK', 
-        timestamp: new Date().toISOString(),
-        database: dbStatus,
-        environment: process.env.NODE_ENV || 'development'
-      });
-    } catch (error) {
-      res.status(503).json({ 
-        status: 'ERROR', 
-        timestamp: new Date().toISOString(),
-        error: error.message 
-      });
-    }
+  app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
   });
 
   // 404 handler
