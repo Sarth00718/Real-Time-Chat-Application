@@ -54,7 +54,7 @@ dotenv.config();
   
   // CORS configuration for handling cookies and credentials
   const allowedOrigins = process.env.NODE_ENV === 'production' 
-    ? ['https://real-time-chat-application-eosin.vercel.app/']
+    ? ['https://real-time-chat-application-two-smoky.vercel.app']
     : ['http://localhost:5173', 'http://localhost:5174'];
 
   const corsOption = {
@@ -87,17 +87,33 @@ dotenv.config();
   app.use("/api/v1/message", voiceMessageRoutes);
 
   // Health check endpoint
-  app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
+  app.get('/health', async (req, res) => {
+    try {
+      // Check database connection
+      const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+      
+      res.status(200).json({ 
+        status: 'OK', 
+        timestamp: new Date().toISOString(),
+        database: dbStatus,
+        environment: process.env.NODE_ENV || 'development'
+      });
+    } catch (error) {
+      res.status(503).json({ 
+        status: 'ERROR', 
+        timestamp: new Date().toISOString(),
+        error: error.message 
+      });
+    }
   });
 
   // 404 handler
-  app.use((req, res) => {
+  app.use((_req, res) => {
     res.status(404).json({ message: 'Route not found' });
   });
 
   // Global error handler
-  app.use((err, req, res, next) => {
+  app.use((err, _req, res, _next) => {
     console.error(err.stack);
     res.status(err.status || 500).json({
       message: err.message || 'Internal server error',

@@ -2,6 +2,14 @@ import groq from '../config/groq.js';
 
 export const chatWithAI = async (req, res) => {
     try {
+        // Check if Groq is configured
+        if (!groq) {
+            return res.status(503).json({
+                success: false,
+                message: 'AI service is not configured. Please contact the administrator.'
+            });
+        }
+
         const { message, conversationHistory = [] } = req.body;
 
         if (!message || !message.trim()) {
@@ -83,6 +91,14 @@ Be concise, friendly, and helpful. Format code with proper markdown syntax.`
 
 export const streamChatWithAI = async (req, res) => {
     try {
+        // Check if Groq is configured
+        if (!groq) {
+            return res.status(503).json({
+                success: false,
+                message: 'AI service is not configured. Please contact the administrator.'
+            });
+        }
+
         const { message, conversationHistory = [] } = req.body;
 
         if (!message || !message.trim()) {
