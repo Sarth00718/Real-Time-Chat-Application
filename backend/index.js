@@ -54,7 +54,7 @@ dotenv.config();
   
   // CORS configuration for handling cookies and credentials
   const allowedOrigins = process.env.NODE_ENV === 'production' 
-    ? ['https://real-time-chat-application-two-smoky.vercel.app']
+    ? ['https://real-time-chat-application-eosin.vercel.app/']
     : ['http://localhost:5173', 'http://localhost:5174'];
 
   const corsOption = {
