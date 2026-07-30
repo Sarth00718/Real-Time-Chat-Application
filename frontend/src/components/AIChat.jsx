@@ -96,8 +96,8 @@ function AIChat({ onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-gradient-to-br from-slate-800 via-slate-900 to-blue-900 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-4xl h-[90vh] flex flex-col border border-blue-500/30">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-0 md:p-4">
+      <div className="bg-gradient-to-br from-slate-800 via-slate-900 to-blue-900 backdrop-blur-md md:rounded-2xl shadow-2xl w-full max-w-4xl h-[100dvh] md:h-[90vh] flex flex-col border border-blue-500/30">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-blue-500/30 bg-gradient-to-r from-blue-900/80 to-indigo-900/80">
           <div className="flex items-center gap-3">
@@ -237,14 +237,14 @@ function AIChat({ onClose }) {
             <button
               type="submit"
               disabled={!input.trim() || isLoading}
-              className={`px-6 py-3 rounded-xl font-medium transition flex items-center gap-2 shadow-lg ${
+              className={`px-4 md:px-6 py-3 rounded-xl font-medium transition flex items-center gap-2 shadow-lg ${
                 !input.trim() || isLoading
                   ? 'bg-gray-600 cursor-not-allowed opacity-50'
                   : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'
               } text-white`}
             >
               <IoSend className="w-5 h-5" />
-              Send
+              <span className="hidden sm:inline">Send</span>
             </button>
           </div>
         </form>

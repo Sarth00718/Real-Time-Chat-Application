@@ -135,13 +135,13 @@ const Message = ({ message, onReply }) => {
             isOwnMessage
               ? 'bg-blue-900 text-white'
               : 'bg-white/20 backdrop-blur-sm text-white'
-          } shadow-md min-w-[60px] min-h-[40px] px-4 py-2 text-base flex items-center break-words`}
+          } shadow-md min-w-[60px] min-h-[40px] px-4 py-2 text-base break-words`}
           onContextMenu={(e) => {
             e.preventDefault();
             setShowMenu(!showMenu);
           }}
         >
-          <div className="space-y-2 w-full">
+          <div className="space-y-2">
             {/* Text Message */}
             {message?.message && (
               <p>{message.message}</p>

@@ -175,7 +175,7 @@ function SendInput() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Type your message..."
-            className="w-full py-3 px-5 rounded-full bg-white/10 border border-white/20
+            className="w-full py-3 pl-5 pr-14 rounded-full bg-white/10 border border-white/20
                        placeholder-gray-300 text-white focus:outline-none focus:ring-2
                        focus:ring-blue-500/50 focus:border-transparent shadow-inner text-base"
             autoComplete="off"
