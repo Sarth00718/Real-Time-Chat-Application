@@ -51,6 +51,13 @@ export const sendMessage = async (req, res) => {
             io.to(receiverSocketId).emit('newMessage', newMessage);
         }
 
+        // Emit socket event to sender's other devices/tabs
+        const senderSocketId = getRecieverSocketId(senderId);
+        if (senderSocketId) {
+            // We emit to all sender's sockets, and the frontend handles deduplication
+            io.to(senderSocketId).emit('newMessage', newMessage);
+        }
+
         return res.status(200).json({ newMessage });
     } catch (error) {
         console.error("sendMessage error:", error);

@@ -21,7 +21,8 @@ const Message = ({ message, onReply }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showForwardModal, setShowForwardModal] = useState(false);
-  const isOwnMessage = message?.senderId === authUser?._id;
+  const senderIdStr = typeof message?.senderId === 'object' ? message.senderId._id : message?.senderId;
+  const isOwnMessage = senderIdStr === authUser?._id;
 
   useEffect(() => {
     scroll.current?.scrollIntoView({ behavior: 'smooth' });
@@ -111,13 +112,13 @@ const Message = ({ message, onReply }) => {
         <div className="w-8 h-8 rounded-full ring-1 ring-white/30">
           <img
             alt="User avatar"
-            src={getImageUrl(isOwnMessage ? authUser?.profilePhoto : selectedUser?.profilePhoto)}
+            src={getImageUrl(isOwnMessage ? authUser?.profilePhoto : (message?.senderId?.profilePhoto || selectedUser?.profilePhoto))}
           />
         </div>
       </div>
       <div className="chat-header mb-1">
         <span className="text-xs opacity-70 text-white font-semibold">
-          {isOwnMessage ? 'You' : selectedUser?.fullName}
+          {isOwnMessage ? 'You' : (message?.senderId?.fullName || selectedUser?.fullName)}
         </span>
         <time className="text-xs opacity-50 ml-2 text-gray-300">
           {formatMessageTime(message?.createdAt || message?.timestamp)}

@@ -68,7 +68,7 @@ function MessageContainor() {
 
               <div className="relative w-12 h-12">
                 {isGroupChat ? (
-                  group.groupPhoto ? (
+                  currentChat?.groupPhoto ? (
                     <img
                       src={getImageUrl(currentChat?.groupPhoto)}
                       alt="group-profile"

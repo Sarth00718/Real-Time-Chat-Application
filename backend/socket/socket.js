@@ -28,7 +28,8 @@ const io = new Server(server, {
 });
 
 export const getRecieverSocketId = (receiverId)=>{
-    return userSocketMap[receiverId];
+    const sockets = userSocketMap[receiverId];
+    return sockets && sockets.length > 0 ? sockets : null;
 }
 
 const userSocketMap = {};
@@ -37,8 +38,13 @@ io.on('connection', async (socket)=>{
     const userId = socket.handshake.query.userId;
     
     if(userId !== undefined && userId !== 'undefined'){
-        userSocketMap[userId] = socket.id;
-        console.log(`User connected: ${userId}`);
+        if (!userSocketMap[userId]) {
+            userSocketMap[userId] = [];
+        }
+        if (!userSocketMap[userId].includes(socket.id)) {
+            userSocketMap[userId].push(socket.id);
+        }
+        console.log(`User connected: ${userId}, socket: ${socket.id}`);
         
         // Update user online status and last seen
         try {
@@ -114,23 +120,28 @@ io.on('connection', async (socket)=>{
         console.log('User disconnected:', socket.id);
         
         if(userId !== undefined && userId !== 'undefined'){
-            // Update user offline status and last seen
-            try {
-                await User.findByIdAndUpdate(userId, {
-                    isOnline: false,
-                    lastSeen: new Date()
-                });
-            } catch (error) {
-                console.error('Error updating user offline status:', error);
+            if (userSocketMap[userId]) {
+                userSocketMap[userId] = userSocketMap[userId].filter(id => id !== socket.id);
+                if (userSocketMap[userId].length === 0) {
+                    // Update user offline status and last seen
+                    try {
+                        await User.findByIdAndUpdate(userId, {
+                            isOnline: false,
+                            lastSeen: new Date()
+                        });
+                    } catch (error) {
+                        console.error('Error updating user offline status:', error);
+                    }
+                    
+                    delete userSocketMap[userId];
+                    
+                    // Emit updated online users list
+                    io.emit('getOnlineUsers', Object.keys(userSocketMap));
+                    
+                    // Emit user offline status
+                    socket.broadcast.emit('userOffline', userId);
+                }
             }
-            
-            delete userSocketMap[userId];
-            
-            // Emit updated online users list
-            io.emit('getOnlineUsers', Object.keys(userSocketMap));
-            
-            // Emit user offline status
-            socket.broadcast.emit('userOffline', userId);
         }
     });
     

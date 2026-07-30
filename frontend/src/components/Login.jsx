@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { FiUser, FiLock, FiLogIn } from 'react-icons/fi';
+import { FiUser, FiLock, FiLogIn, FiEye, FiEyeOff } from 'react-icons/fi';
 
 function Login() {
   const [user, setUser] = useState({
@@ -9,6 +9,7 @@ function Login() {
     password: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -67,16 +68,23 @@ function Login() {
               <FiLock className="text-gray-500" />
             </div>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Password"
-              className="w-full px-4 py-3 pl-10 rounded-lg bg-white/10 text-white placeholder-gray-500 border border-white/20 
+              className="w-full px-4 py-3 pl-10 pr-10 rounded-lg bg-white/10 text-white placeholder-gray-500 border border-white/20 
                 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent"
               value={user.password}
               onChange={(e) => setUser({ ...user, password: e.target.value })}
               required
               disabled={isLoading}
             />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-white transition-colors"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FiEyeOff /> : <FiEye />}
+            </button>
           </div>
 
           <button

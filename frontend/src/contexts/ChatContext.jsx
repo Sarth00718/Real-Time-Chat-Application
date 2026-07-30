@@ -24,18 +24,20 @@ export const ChatProvider = ({ children }) => {
 
     setLoading(true);
     try {
-      let data;
+      let data = [];
       if (isGroupChat) {
-        data = await apiService.getGroupMessages(selectedGroup._id);
+        const resData = await apiService.getGroupMessages(selectedGroup._id);
+        data = resData?.messages || [];
       } else {
-        data = await apiService.getMessages(selectedUser._id);
+        const resData = await apiService.getMessages(selectedUser._id);
+        data = Array.isArray(resData) ? resData : [];
         
         // Mark messages as read when viewing conversation
         if (data && data.length > 0) {
           await markAsRead(selectedUser._id);
         }
       }
-      setMessages(data || []);
+      setMessages(data);
     } catch (error) {
       console.error('Failed to fetch messages:', error);
       setMessages([]);
@@ -96,7 +98,10 @@ export const ChatProvider = ({ children }) => {
 
       const newMessage = data?.newMessage || data?.message;
       if (newMessage) {
-        setMessages(prev => [...prev, newMessage]);
+        setMessages(prev => {
+          if (prev.some(msg => msg._id === newMessage._id)) return prev;
+          return [...prev, newMessage];
+        });
       }
 
       return { success: true, data: newMessage };
@@ -108,16 +113,26 @@ export const ChatProvider = ({ children }) => {
 
   // Add a new message (for real-time updates)
   const addMessage = useCallback((newMessage) => {
-    setMessages(prev => [...prev, newMessage]);
-    
-    // Update unread count if message is from another user
-    if (newMessage.senderId !== authUser?._id) {
-      setUnreadCounts(prev => ({
-        ...prev,
-        [newMessage.senderId]: (prev[newMessage.senderId] || 0) + 1
-      }));
+    const isForCurrentChat = selectedUser?._id && 
+        (newMessage.senderId === selectedUser._id || newMessage.receiverId === selectedUser._id);
+    const isForCurrentGroup = selectedGroup?._id && newMessage.groupId === selectedGroup._id;
+
+    if (isForCurrentChat || isForCurrentGroup) {
+      setMessages(prev => {
+        if (prev.some(msg => msg._id === newMessage._id)) return prev;
+        return [...prev, newMessage];
+      });
+      // Optionally mark as read if we are looking at it (can be handled separately)
+    } else {
+      // Update unread count if message is from another user and not currently viewing
+      if (newMessage.senderId !== authUser?._id) {
+        setUnreadCounts(prev => ({
+          ...prev,
+          [newMessage.groupId ? newMessage.groupId : newMessage.senderId]: (prev[newMessage.groupId ? newMessage.groupId : newMessage.senderId] || 0) + 1
+        }));
+      }
     }
-  }, [authUser?._id]);
+  }, [authUser?._id, selectedUser?._id, selectedGroup?._id]);
 
   // Clear messages
   const clearMessages = useCallback(() => {
@@ -148,10 +163,26 @@ export const ChatProvider = ({ children }) => {
     }
   }, []);
 
-  // Update message status
+  // Update message status (single)
   const updateMessageStatus = useCallback((messageId, status) => {
     setMessages(prev => prev.map(msg => 
       msg._id === messageId ? { ...msg, status, delivered: status === 'delivered' || status === 'read', read: status === 'read' } : msg
+    ));
+  }, []);
+
+  // Mark messages as read by a specific user
+  const markMessagesAsReadBy = useCallback((readByUserId) => {
+    setMessages(prev => prev.map(msg => 
+      (!msg.read && (msg.receiverId === readByUserId || msg.groupId === readByUserId))
+        ? { ...msg, status: 'read', delivered: true, read: true } 
+        : msg
+    ));
+  }, []);
+
+  // Update pinned status
+  const updateMessagePinned = useCallback((messageId, isPinned) => {
+    setMessages(prev => prev.map(msg => 
+      msg._id === messageId ? { ...msg, isPinned } : msg
     ));
   }, []);
 
@@ -208,6 +239,8 @@ export const ChatProvider = ({ children }) => {
     fetchUnreadCounts,
     deleteMessage,
     updateMessageStatus,
+    markMessagesAsReadBy,
+    updateMessagePinned,
     addReaction,
     updateMessageReactions,
     editMessage

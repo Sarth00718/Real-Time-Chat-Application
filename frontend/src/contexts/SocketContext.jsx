@@ -8,8 +8,8 @@ const SocketContext = createContext(null);
 
 export const SocketProvider = ({ children }) => {
   const { authUser } = useAuth();
-  const { setOnlineUsers } = useUser();
-  const { addMessage, fetchMessages, selectedUser, updateMessageStatus, setMessages, updateMessageReactions } = useChat();
+  const { setOnlineUsers, setGroups, selectedGroup, setSelectedGroup } = useUser();
+  const { addMessage, fetchMessages, selectedUser, updateMessageStatus, markMessagesAsReadBy, updateMessagePinned, setMessages, updateMessageReactions } = useChat();
   const socketRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
   const reconnectAttemptsRef = useRef(0);
@@ -70,18 +70,66 @@ export const SocketProvider = ({ children }) => {
 
     // Handle new messages
     socket.on('newMessage', (newMessage) => {
-      // Only add message if it's for the current conversation
-      if (selectedUser?._id && 
-          (newMessage.senderId === selectedUser._id || newMessage.receiverId === selectedUser._id)) {
-        addMessage(newMessage);
-        
-        // Emit delivered status if we're the receiver
-        if (newMessage.receiverId === authUser?._id) {
-          socket.emit('messageDelivered', {
-            messageId: newMessage._id,
-            receiverId: newMessage.senderId
-          });
-        }
+      // Always call addMessage, it will smartly route to active chat or unread counts
+      addMessage(newMessage);
+      
+      // Emit delivered status if we're the receiver
+      if (newMessage.receiverId === authUser?._id) {
+        socket.emit('messageDelivered', {
+          messageId: newMessage._id,
+          receiverId: newMessage.senderId
+        });
+      }
+    });
+
+    // Handle new group messages
+    socket.on('newGroupMessage', ({ groupId, message }) => {
+      addMessage(message);
+    });
+
+    // Handle messages read
+    socket.on('messagesRead', ({ readBy }) => {
+      if (typeof markMessagesAsReadBy === 'function') {
+        markMessagesAsReadBy(readBy);
+      }
+    });
+
+    // Handle message pinned
+    socket.on('messagePinned', ({ messageId }) => {
+      if (typeof updateMessagePinned === 'function') {
+        updateMessagePinned(messageId, true);
+      }
+    });
+
+    // Handle message unpinned
+    socket.on('messageUnpinned', ({ messageId }) => {
+      if (typeof updateMessagePinned === 'function') {
+        updateMessagePinned(messageId, false);
+      }
+    });
+
+    // Handle group updates
+    socket.on('addedToGroup', (group) => {
+      if (typeof setGroups === 'function') {
+        setGroups(prev => [...prev, group]);
+      }
+    });
+
+    socket.on('groupUpdated', (updatedGroup) => {
+      if (typeof setGroups === 'function') {
+        setGroups(prev => prev.map(g => g._id === updatedGroup._id ? updatedGroup : g));
+      }
+      if (selectedGroup?._id === updatedGroup._id && typeof setSelectedGroup === 'function') {
+        setSelectedGroup(updatedGroup);
+      }
+    });
+
+    socket.on('removedFromGroup', ({ groupId }) => {
+      if (typeof setGroups === 'function') {
+        setGroups(prev => prev.filter(g => g._id !== groupId));
+      }
+      if (selectedGroup?._id === groupId && typeof setSelectedGroup === 'function') {
+        setSelectedGroup(null);
       }
     });
 
@@ -177,26 +225,35 @@ export const SocketProvider = ({ children }) => {
       console.error('❌ Reconnection failed');
     });
 
-  }, [authUser?._id, selectedUser?._id, setOnlineUsers, addMessage, handleReconnection, updateMessageStatus, setMessages, updateMessageReactions]);
+  }, [authUser?._id, selectedUser?._id, selectedGroup?._id, setOnlineUsers, addMessage, handleReconnection, updateMessageStatus, markMessagesAsReadBy, updateMessagePinned, setMessages, updateMessageReactions, setGroups, setSelectedGroup]);
 
   // Update listeners when selectedUser changes
   useEffect(() => {
     if (socketRef.current) {
       // Remove old listeners
       socketRef.current.off('newMessage');
+      socketRef.current.off('newGroupMessage');
       
       // Re-setup listeners with new selectedUser
       const socket = socketService.getSocket();
       if (socket) {
         socket.on('newMessage', (newMessage) => {
-          if (selectedUser?._id && 
-              (newMessage.senderId === selectedUser._id || newMessage.receiverId === selectedUser._id)) {
-            addMessage(newMessage);
+          addMessage(newMessage);
+          
+          if (newMessage.receiverId === authUser?._id) {
+            socket.emit('messageDelivered', {
+              messageId: newMessage._id,
+              receiverId: newMessage.senderId
+            });
           }
+        });
+        
+        socket.on('newGroupMessage', ({ groupId, message }) => {
+          addMessage(message);
         });
       }
     }
-  }, [selectedUser?._id, addMessage]);
+  }, [selectedUser?._id, selectedGroup?._id, authUser?._id, addMessage]);
 
   // Emit a socket event
   const emit = useCallback((event, data) => {
