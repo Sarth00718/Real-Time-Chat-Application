@@ -11,12 +11,13 @@ import { useOnlineStatus } from '../hooks/useOnlineStatus';
 import MessageReactions from './MessageReactions';
 import MessageEditModal from './MessageEditModal';
 import MessageForwardModal from './MessageForwardModal';
+import apiService from '../services/apiService';
 
 const Message = ({ message, onReply }) => {
   const scroll = useRef();
   const { authUser } = useAuth();
   const { selectedUser, otherUsers, groups } = useUser();
-  const { deleteMessage, addReaction, editMessage } = useChat();
+  const { deleteMessage, addReaction, editMessage, updateMessagePinned } = useChat();
   const isOnline = useOnlineStatus();
   const [showMenu, setShowMenu] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -57,8 +58,17 @@ const Message = ({ message, onReply }) => {
 
   const handlePin = async () => {
     setShowMenu(false);
-    // Pin functionality would go here
-    console.log('Pin message:', message._id);
+    try {
+      if (message.isPinned) {
+        await apiService.unpinMessage(message._id);
+        updateMessagePinned(message._id, false);
+      } else {
+        await apiService.pinMessage(message._id);
+        updateMessagePinned(message._id, true);
+      }
+    } catch (error) {
+      console.error('Failed to pin/unpin message:', error);
+    }
   };
 
   const handleSaveEdit = async (messageId, newText) => {
@@ -106,7 +116,7 @@ const Message = ({ message, onReply }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`chat ${isOwnMessage ? 'chat-end' : 'chat-start'} mb-4 px-2 relative group`}
+      className={`chat ${isOwnMessage ? 'chat-end' : 'chat-start'} mb-4 px-2 relative group overflow-visible`}
     >
       <div className="chat-image avatar">
         <div className="w-8 h-8 rounded-full ring-1 ring-white/30">
@@ -135,13 +145,25 @@ const Message = ({ message, onReply }) => {
             isOwnMessage
               ? 'bg-blue-900 text-white'
               : 'bg-white/20 backdrop-blur-sm text-white'
-          } shadow-md min-w-[60px] min-h-[40px] px-4 py-2 text-base break-words`}
+          } shadow-md px-4 py-2 text-base w-fit max-w-full`}
           onContextMenu={(e) => {
             e.preventDefault();
             setShowMenu(!showMenu);
           }}
         >
           <div className="space-y-2">
+            {/* Replied Message Snippet */}
+            {message?.replyTo && (
+              <div className="bg-black/20 p-2 rounded border-l-4 border-blue-400 text-sm mb-1 opacity-80">
+                <span className="font-semibold block text-blue-300 text-xs">
+                  Replying to message
+                </span>
+                <span className="truncate block max-w-[200px]">
+                  {message.replyTo.message || 'Attachment'}
+                </span>
+              </div>
+            )}
+            
             {/* Text Message */}
             {message?.message && (
               <p>{message.message}</p>
@@ -177,7 +199,7 @@ const Message = ({ message, onReply }) => {
         
         {/* Context menu */}
         {showMenu && isOnline && (
-          <div className="absolute top-0 right-0 mt-2 bg-gray-800 rounded-lg shadow-lg py-1 z-10 min-w-[150px]">
+          <div className={`absolute top-full ${isOwnMessage ? 'right-0' : 'left-0'} mt-1 bg-gray-800 rounded-lg shadow-lg py-1 z-50 min-w-[150px]`}>
             <button
               onClick={handleReply}
               className="w-full px-4 py-2 text-left text-white hover:bg-gray-700 flex items-center gap-2"
@@ -189,12 +211,6 @@ const Message = ({ message, onReply }) => {
               className="w-full px-4 py-2 text-left text-white hover:bg-gray-700 flex items-center gap-2"
             >
               <BsForward /> Forward
-            </button>
-            <button
-              onClick={handlePin}
-              className="w-full px-4 py-2 text-left text-white hover:bg-gray-700 flex items-center gap-2"
-            >
-              <BsPin /> {message?.isPinned ? 'Unpin' : 'Pin'}
             </button>
             {isOwnMessage && message?.message && (
               <button

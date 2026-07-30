@@ -29,9 +29,8 @@ const MessageForwardModal = ({ isOpen, onClose, message, users, groups }) => {
 
     setLoading(true);
     try {
-      await apiService.client.post('/api/v1/message/forward', {
-        messageId: message._id,
-        userIds: selectedUsers,
+      await apiService.client.post(`/api/v1/message/${message._id}/forward`, {
+        recipientIds: selectedUsers,
         groupIds: selectedGroups
       });
 

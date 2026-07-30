@@ -85,15 +85,15 @@ export const ChatProvider = ({ children }) => {
   }, []);
 
   // Send a new message
-  const sendMessage = useCallback(async (messageData, files = []) => {
+  const sendMessage = useCallback(async (messageData, files = [], replyToId = null) => {
     if (!currentChatId) return { success: false, error: 'No chat selected' };
 
     try {
       let data;
       if (isGroupChat) {
-        data = await apiService.sendGroupMessage(selectedGroup._id, messageData, files);
+        data = await apiService.sendGroupMessage(selectedGroup._id, messageData, files, replyToId);
       } else {
-        data = await apiService.sendMessage(selectedUser._id, messageData, files);
+        data = await apiService.sendMessage(selectedUser._id, messageData, files, replyToId);
       }
 
       const newMessage = data?.newMessage || data?.message;

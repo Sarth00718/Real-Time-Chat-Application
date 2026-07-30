@@ -73,11 +73,15 @@ class ApiService {
     return response.data;
   }
 
-  async sendMessage(userId, messageData, files = []) {
+  async sendMessage(userId, messageData, files = [], replyToId = null) {
     const formData = new FormData();
     
     if (messageData?.trim()) {
       formData.append('message', messageData);
+    }
+    
+    if (replyToId) {
+      formData.append('replyToId', replyToId);
     }
     
     files.forEach((file) => {
@@ -136,6 +140,17 @@ class ApiService {
   // Edit message
   async editMessage(messageId, message) {
     const response = await this.client.put(`/api/v1/message/edit/${messageId}`, { message });
+    return response.data;
+  }
+
+  // Pin message
+  async pinMessage(messageId) {
+    const response = await this.client.post(`/api/v1/message/${messageId}/pin`);
+    return response.data;
+  }
+
+  async unpinMessage(messageId) {
+    const response = await this.client.delete(`/api/v1/message/${messageId}/pin`);
     return response.data;
   }
 
@@ -225,11 +240,15 @@ class ApiService {
     return response.data;
   }
 
-  async sendGroupMessage(groupId, messageData, files = []) {
+  async sendGroupMessage(groupId, messageData, files = [], replyToId = null) {
     const formData = new FormData();
     
     if (messageData?.trim()) {
       formData.append('message', messageData);
+    }
+    
+    if (replyToId) {
+      formData.append('replyToId', replyToId);
     }
     
     files.forEach((file) => {

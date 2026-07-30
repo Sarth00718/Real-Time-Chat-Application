@@ -28,17 +28,19 @@ const MessageReactions = ({ message, onReact, currentUserId }) => {
   }, {}) || {};
 
   return (
-    <div className="relative">
-      {/* Reaction button */}
+    <div className="relative inline-flex items-center">
+      {/* Reaction trigger */}
       <button
-        onClick={() => setShowPicker(!showPicker)}
-        className="text-gray-400 hover:text-white transition-colors p-1"
+        type="button"
+        onClick={() => setShowPicker(prev => !prev)}
+        className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-black/20 text-gray-300 transition hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40"
         title="React to message"
+        aria-expanded={showPicker}
       >
         {userReaction ? (
           <span className="text-lg">{userReaction.emoji}</span>
         ) : (
-          <span className="text-sm">😊</span>
+          <span className="text-lg">😊</span>
         )}
       </button>
 
@@ -47,33 +49,42 @@ const MessageReactions = ({ message, onReact, currentUserId }) => {
         {showPicker && (
           <>
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 10 }}
+              initial={{ opacity: 0, scale: 0.9, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: 10 }}
-              className="absolute bottom-full mb-2 bg-gray-800 rounded-lg shadow-lg p-2 flex gap-1 z-10"
+              exit={{ opacity: 0, scale: 0.9, y: 10 }}
+              className="absolute bottom-full right-0 mb-2 min-w-[220px] rounded-2xl bg-slate-950/95 p-2 shadow-2xl ring-1 ring-white/10 z-50 overflow-visible"
             >
-              {COMMON_EMOJIS.map(emoji => (
-                <button
-                  key={emoji}
-                  onClick={() => handleReact(emoji)}
-                  className="text-2xl hover:scale-125 transition-transform p-1"
-                >
-                  {emoji}
-                </button>
-              ))}
+              <div className="flex flex-wrap gap-2 p-1">
+                {COMMON_EMOJIS.map(emoji => (
+                  <button
+                    key={emoji}
+                    type="button"
+                    onClick={() => handleReact(emoji)}
+                    className="flex h-10 w-10 items-center justify-center rounded-2xl text-2xl transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20"
+                    aria-label={`React with ${emoji}`}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
               {userReaction && (
-                <button
-                  onClick={handleRemoveReaction}
-                  className="text-red-400 hover:text-red-300 text-sm px-2"
-                  title="Remove reaction"
-                >
-                  ✕
-                </button>
+                <div className="border-t border-white/10 pt-2 mt-2 text-right">
+                  <button
+                    type="button"
+                    onClick={handleRemoveReaction}
+                    className="text-sm text-rose-300 hover:text-rose-200 transition"
+                    title="Remove reaction"
+                  >
+                    Remove reaction
+                  </button>
+                </div>
               )}
             </motion.div>
-            <div 
-              className="fixed inset-0 z-0" 
+            <button
+              type="button"
+              className="fixed inset-0 z-0 bg-transparent"
               onClick={() => setShowPicker(false)}
+              aria-hidden="true"
             />
           </>
         )}
@@ -87,7 +98,7 @@ const MessageReactions = ({ message, onReact, currentUserId }) => {
               key={emoji}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="bg-gray-700/50 rounded-full px-2 py-0.5 flex items-center gap-1 text-xs"
+              className="bg-slate-900/80 rounded-full px-2 py-0.5 flex items-center gap-1 text-xs text-white"
             >
               <span>{emoji}</span>
               <span className="text-gray-300">{reactions.length}</span>

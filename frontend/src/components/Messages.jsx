@@ -11,12 +11,11 @@ import { motion } from 'framer-motion';
 import { groupMessagesByDate } from '../utils/dateUtils';
 import { BiSearch } from 'react-icons/bi';
 
-function Messages() {
+function Messages({ onReply }) {
   const { messages, loading } = useChat();
   const { selectedUser } = useUser();
   const { isUserTyping } = useTypingIndicator();
   const [showSearch, setShowSearch] = useState(false);
-  const [replyToMessage, setReplyToMessage] = useState(null);
   const messagesEndRef = useRef(null);
   const containerRef = useRef(null);
   const messageRefs = useRef({});
@@ -43,9 +42,9 @@ function Messages() {
 
   // Handle reply to message
   const handleReply = (message) => {
-    setReplyToMessage(message);
-    // You can add logic here to focus on input or show reply preview
-    console.log('Replying to:', message);
+    if (onReply) {
+      onReply(message);
+    }
   };
   
   // Show loading skeleton

@@ -44,7 +44,16 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       // Custom fallback UI
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700 p-4">
+        <div 
+          className="min-h-screen w-full bg-blue-900/40 flex items-center justify-center p-4"
+          style={{
+            backgroundImage: `url('/bg.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundBlendMode: 'overlay',
+          }}
+        >
           <div className="max-w-md w-full bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/30 p-8">
             <div className="flex flex-col items-center text-center">
               {/* Error Icon */}

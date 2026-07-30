@@ -5,7 +5,7 @@ const connectDB = async () => {
     try {
         const connectionInstance = await mongoose.connect(process.env.MONGODB_URI, {
             dbName: DB_NAME,
-            serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
+            serverSelectionTimeoutMS: 30000, // Keep trying to send operations for 30 seconds
             socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
             maxIdleTimeMS: 60000 // Close idle connections after 60 seconds
         });

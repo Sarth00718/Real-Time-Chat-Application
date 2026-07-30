@@ -11,8 +11,20 @@ function App() {
   // Show loading state while checking authentication
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700">
-        <div className="text-white text-xl">Loading...</div>
+      <div 
+        className="min-h-screen w-full bg-blue-900/40 flex items-center justify-center"
+        style={{
+          backgroundImage: `url('/bg.jpg')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundBlendMode: 'overlay',
+        }}
+      >
+        <div className="flex flex-col items-center gap-4">
+          <span className="loading loading-spinner text-white loading-lg"></span>
+          <div className="text-white text-xl font-semibold">Loading...</div>
+        </div>
       </div>
     );
   }

@@ -10,7 +10,7 @@ export const uploadProfilePhoto = async (req, res) => {
         const userId = req.id;
 
         if (!req.file) {
-            return re99999999s.status(400).json({ error: 'No file uploaded' });
+            return res.status(400).json({ error: 'No file uploaded' });
         }
 
         // Upload to Cloudinary

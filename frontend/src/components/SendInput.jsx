@@ -8,7 +8,7 @@ import { useTypingIndicator } from '../hooks/useTypingIndicator';
 import FilePreview from './FilePreview';
 import { toast } from 'react-hot-toast';
 
-function SendInput() {
+function SendInput({ replyToMessage, onCancelReply }) {
   const [message, setMessage] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -45,13 +45,14 @@ function SendInput() {
 
     setIsUploading(true);
 
-    const result = await sendMsg(trimmedMessage, selectedFiles);
+    const result = await sendMsg(trimmedMessage, selectedFiles, replyToMessage?._id);
 
     setIsUploading(false);
 
     if (result.success) {
       setMessage('');
       setSelectedFiles([]);
+      if (onCancelReply) onCancelReply();
     } else {
       toast.error(result.error || 'Failed to send message');
     }
@@ -130,6 +131,27 @@ function SendInput() {
 
   return (
     <div className="relative py-4 md:pb-3 border-t border-white/10 bg-blue-900/40 backdrop-blur-md p-4">
+      {/* Reply Preview Section */}
+      {replyToMessage && (
+        <div className="flex items-center justify-between bg-white/10 p-3 rounded-t-lg border-l-4 border-blue-500 mb-2">
+          <div className="flex flex-col overflow-hidden">
+            <span className="text-blue-300 text-sm font-semibold">
+              Replying to {replyToMessage?.senderId?.fullName || 'User'}
+            </span>
+            <span className="text-white/80 text-sm truncate">
+              {replyToMessage?.message || 'Attachment'}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={onCancelReply}
+            className="text-white/60 hover:text-white p-1 rounded-full hover:bg-white/20 transition"
+          >
+            <IoClose size={20} />
+          </button>
+        </div>
+      )}
+
       {/* File Preview Section */}
       <FilePreview files={selectedFiles} onRemove={removeFile} />
 

@@ -1,8 +1,18 @@
 import multer from 'multer';
 
-// Use memory storage for cloud deployments
-// Files are stored in memory as Buffer objects and uploaded to Cloudinary
-const storage = multer.memoryStorage();
+import os from 'os';
+import path from 'path';
+
+// Use disk storage to temporary directory so Cloudinary upload endpoints have a valid file path
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, os.tmpdir());
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
 
 // File filter for images only
 const fileFilter = (req, file, cb) => {

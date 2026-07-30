@@ -21,8 +21,12 @@ export const deleteMessageForMe = async (req, res) => {
             return res.status(404).json({ error: 'Message not found' });
         }
 
-        // Check if user is sender or receiver
-        if (message.senderId.toString() !== userId && message.receiverId.toString() !== userId) {
+        // Check if user is sender, receiver, or if it's a group message
+        const isSender = message.senderId.toString() === userId;
+        const isReceiver = message.receiverId && message.receiverId.toString() === userId;
+        const isGroupMessage = !!message.groupId;
+
+        if (!isSender && !isReceiver && !isGroupMessage) {
             return res.status(403).json({ error: 'Unauthorized to delete this message' });
         }
 

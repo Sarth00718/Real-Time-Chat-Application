@@ -4,7 +4,6 @@ import SendInput from './SendInput.jsx';
 import { BiArrowBack } from 'react-icons/bi';
 import { IoSparkles } from 'react-icons/io5';
 import { HiUserGroup } from 'react-icons/hi';
-import ThemeToggle from './ThemeToggle.jsx';
 import AIChat from './AIChat.jsx';
 import { useAuth } from '../contexts/AuthContext';
 import { useUser } from '../contexts/UserContext';
@@ -14,6 +13,7 @@ function MessageContainor() {
   const { authUser } = useAuth();
   const { selectedUser, setSelectedUser, selectedGroup, setSelectedGroup, onlineUsers } = useUser();
   const [showAIChat, setShowAIChat] = useState(false);
+  const [replyToMessage, setReplyToMessage] = useState(null);
 
   const isOnline = onlineUsers?.includes(selectedUser?._id) ?? false;
   const currentChat = selectedGroup || selectedUser;
@@ -92,15 +92,15 @@ function MessageContainor() {
               >
                 <IoSparkles className="w-6 h-6" />
               </button>
-
-              {/* Theme Toggle */}
-              <ThemeToggle />
             </div>
 
             {/* Messages & Input */}
             <div className="flex-1 flex flex-col overflow-hidden h-full min-h-0">
-              <Messages />
-              <SendInput />
+              <Messages onReply={setReplyToMessage} />
+              <SendInput 
+                replyToMessage={replyToMessage} 
+                onCancelReply={() => setReplyToMessage(null)} 
+              />
             </div>
           </>
         ) : (

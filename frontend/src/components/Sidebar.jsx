@@ -157,26 +157,29 @@ const Sidebar = () => {
       </div>
       
       {/* Search section */}
-      <form onSubmit={searchSubmitHandler} className='flex items-center gap-2 mb-4'>
+      <div className='flex items-center gap-2 mb-4'>
         <div className="relative flex-1">
           <input
             value={search}
             onChange={handleSearchChange}
             className='input input-bordered bg-white/20 text-white placeholder-gray-300 w-full pr-10 focus:ring-2 focus:ring-blue-400 focus:border-transparent'
-            type="text"
+            type="search"
             placeholder={activeTab === 'users' ? 'Search users...' : 'Search groups...'}
+            aria-label={activeTab === 'users' ? 'Search users' : 'Search groups'}
+            autoComplete="off"
           />
           {search && (
             <button
               type="button"
               onClick={clearSearch}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-300 hover:text-white transition-colors"
+              aria-label="Clear search"
             >
               <MdClear className='w-5 h-5' />
             </button>
           )}
         </div>
-        {activeTab === 'groups' ? (
+        {activeTab === 'groups' && (
           <button
             type="button"
             onClick={() => setShowCreateGroup(true)}
@@ -185,12 +188,8 @@ const Sidebar = () => {
           >
             <MdGroupAdd className='w-5 h-5' />
           </button>
-        ) : (
-          <button type='submit' className='btn bg-blue-900 hover:bg-blue-700 border-none text-white'>
-            <BiSearchAlt2 className='w-5 h-5' />
-          </button>
         )}
-      </form>
+      </div>
 
       {/* Search results indicator */}
       {search && !loading && !groupsLoading && (

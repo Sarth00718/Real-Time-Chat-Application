@@ -7,7 +7,7 @@ function Layout() {
 
   return (
     <div
-      className="min-h-screen w-full bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700"
+      className="min-h-screen w-full bg-blue-900/40"
       style={{
         backgroundImage: `url('/bg.jpg')`,
         backgroundSize: 'cover',

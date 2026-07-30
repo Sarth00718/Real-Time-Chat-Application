@@ -21,28 +21,34 @@ const OfflineAlert = () => {
     <AnimatePresence>
       {!isOnline && (
         <motion.div
-          initial={{ y: -100, opacity: 0 }}
+          initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -100, opacity: 0 }}
-          className="fixed top-0 left-0 right-0 z-50 bg-red-500 text-white py-3 px-4 shadow-lg"
+          exit={{ y: -20, opacity: 0 }}
+          className="fixed top-4 right-4 z-50 max-w-xs rounded-2xl border border-white/10 bg-rose-600/95 text-white shadow-2xl backdrop-blur-sm px-4 py-3"
         >
-          <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
+          <div className="flex items-center gap-3">
             <BiWifiOff className="w-5 h-5 animate-pulse" />
-            <span className="font-semibold">You are offline. Check your internet connection.</span>
+            <div>
+              <p className="text-sm font-semibold">You are offline</p>
+              <p className="text-xs text-white/80">Check your internet connection.</p>
+            </div>
           </div>
         </motion.div>
       )}
-      
+
       {showOnline && (
         <motion.div
-          initial={{ y: -100, opacity: 0 }}
+          initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -100, opacity: 0 }}
-          className="fixed top-0 left-0 right-0 z-50 bg-green-500 text-white py-3 px-4 shadow-lg"
+          exit={{ y: -20, opacity: 0 }}
+          className="fixed top-4 right-4 z-50 max-w-xs rounded-2xl border border-white/10 bg-emerald-600/95 text-white shadow-2xl backdrop-blur-sm px-4 py-3"
         >
-          <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
+          <div className="flex items-center gap-3">
             <BiWifi className="w-5 h-5" />
-            <span className="font-semibold">Back online!</span>
+            <div>
+              <p className="text-sm font-semibold">Back online</p>
+              <p className="text-xs text-white/80">Your connection has been restored.</p>
+            </div>
           </div>
         </motion.div>
       )}
