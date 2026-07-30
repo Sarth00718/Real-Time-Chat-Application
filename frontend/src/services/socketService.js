@@ -37,7 +37,7 @@ class SocketService {
         query: { userId },
         auth: token ? { token } : undefined,
         withCredentials: true,
-        transports: ['websocket', 'polling'], // Try websocket first, fallback to polling
+        transports: ['websocket'], // Strictly use websocket, no polling
         reconnection: true,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,

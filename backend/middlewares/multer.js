@@ -1,9 +1,18 @@
 import multer from 'multer';
 import path from 'path';
 
-// Use memory storage for cloud deployments (Render, Heroku, etc.)
-// Files are stored in memory as Buffer objects
-const storage = multer.memoryStorage();
+import os from 'os';
+
+// Use disk storage to temporary directory so Cloudinary upload endpoints have a valid file path
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, os.tmpdir());
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
 
 // File filter to validate file types
 const fileFilter = (req, file, cb) => {

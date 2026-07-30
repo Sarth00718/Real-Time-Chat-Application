@@ -10,7 +10,7 @@ export const uploadProfilePhoto = async (req, res) => {
         const userId = req.id;
 
         if (!req.file) {
-            return res.status(400).json({ error: 'No file uploaded' });
+            return re99999999s.status(400).json({ error: 'No file uploaded' });
         }
 
         // Upload to Cloudinary
@@ -42,12 +42,12 @@ export const uploadProfilePhoto = async (req, res) => {
         });
     } catch (error) {
         console.error('uploadProfilePhoto error:', error);
-        
+
         // Clean up temp file on error
         if (req.file && fs.existsSync(req.file.path)) {
             fs.unlinkSync(req.file.path);
         }
-        
+
         return res.status(500).json({ error: 'Failed to upload profile photo' });
     }
 };
