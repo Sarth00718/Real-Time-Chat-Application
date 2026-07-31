@@ -70,14 +70,6 @@ export const deleteMessageForEveryone = async (req, res) => {
             return res.status(403).json({ error: 'Only sender can delete message for everyone' });
         }
 
-        // Check if message is within 1 hour (optional time limit)
-        const oneHour = 60 * 60 * 1000;
-        const messageAge = Date.now() - new Date(message.createdAt).getTime();
-        if (messageAge > oneHour) {
-            return res.status(400).json({ 
-                error: 'Messages can only be deleted for everyone within 1 hour of sending' 
-            });
-        }
 
         // Mark as deleted for everyone
         message.deletedForEveryone = true;
@@ -85,10 +77,16 @@ export const deleteMessageForEveryone = async (req, res) => {
         message.files = [];
         await message.save();
 
-        // Emit socket event to receiver
-        const receiverSocketId = getRecieverSocketId(message.receiverId.toString());
-        if (receiverSocketId) {
-            io.to(receiverSocketId).emit('messageDeletedForEveryone', {
+        // Emit socket event to receiver or group
+        if (message.receiverId) {
+            const receiverSocketId = getRecieverSocketId(message.receiverId.toString());
+            if (receiverSocketId) {
+                io.to(receiverSocketId).emit('messageDeletedForEveryone', {
+                    messageId: message._id
+                });
+            }
+        } else if (message.groupId) {
+            io.to(message.groupId.toString()).emit('messageDeletedForEveryone', {
                 messageId: message._id
             });
         }

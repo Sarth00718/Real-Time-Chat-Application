@@ -231,7 +231,7 @@ function AIChat({ onClose }) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask me anything..."
-              className="flex-1 px-4 py-3 bg-slate-800/80 border border-blue-500/30 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-inner"
+              className="flex-1 px-4 py-3 bg-slate-800/80 border border-blue-500/30 rounded-xl text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-inner"
               disabled={isLoading}
             />
             <button

@@ -8,7 +8,6 @@ import { getImageUrl, isImageFile } from '../utils/imageUtils';
 import { formatMessageTime } from '../utils/dateUtils';
 import { BsCheck, BsCheckAll, BsTrash, BsPencil, BsPin, BsReply, BsForward } from 'react-icons/bs';
 import { useOnlineStatus } from '../hooks/useOnlineStatus';
-import MessageReactions from './MessageReactions';
 import MessageEditModal from './MessageEditModal';
 import MessageForwardModal from './MessageForwardModal';
 import apiService from '../services/apiService';
@@ -199,37 +198,37 @@ const Message = ({ message, onReply }) => {
         
         {/* Context menu */}
         {showMenu && isOnline && (
-          <div className={`absolute top-full ${isOwnMessage ? 'right-0' : 'left-0'} mt-1 bg-gray-800 rounded-lg shadow-lg py-1 z-50 min-w-[150px]`}>
+          <div className={`absolute top-full ${isOwnMessage ? 'right-0' : 'left-0'} mt-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-lg py-1 z-50 min-w-[150px]`}>
             <button
               onClick={handleReply}
-              className="w-full px-4 py-2 text-left text-white hover:bg-gray-700 flex items-center gap-2"
+              className="w-full px-4 py-2 text-left text-white hover:bg-white/20 flex items-center gap-2 transition-colors"
             >
               <BsReply /> Reply
             </button>
             <button
               onClick={handleForward}
-              className="w-full px-4 py-2 text-left text-white hover:bg-gray-700 flex items-center gap-2"
+              className="w-full px-4 py-2 text-left text-white hover:bg-white/20 flex items-center gap-2 transition-colors"
             >
               <BsForward /> Forward
             </button>
             {isOwnMessage && message?.message && (
               <button
                 onClick={handleEdit}
-                className="w-full px-4 py-2 text-left text-white hover:bg-gray-700 flex items-center gap-2"
+                className="w-full px-4 py-2 text-left text-white hover:bg-white/20 flex items-center gap-2 transition-colors"
               >
                 <BsPencil /> Edit
               </button>
             )}
             <button
               onClick={handleDeleteForMe}
-              className="w-full px-4 py-2 text-left text-white hover:bg-gray-700 flex items-center gap-2"
+              className="w-full px-4 py-2 text-left text-white hover:bg-white/20 flex items-center gap-2 transition-colors"
             >
               <BsTrash /> Delete for me
             </button>
             {isOwnMessage && (
               <button
                 onClick={handleDeleteForEveryone}
-                className="w-full px-4 py-2 text-left text-red-400 hover:bg-gray-700 flex items-center gap-2"
+                className="w-full px-4 py-2 text-left text-red-400 hover:bg-white/20 flex items-center gap-2 transition-colors"
               >
                 <BsTrash /> Delete for everyone
               </button>
@@ -240,11 +239,6 @@ const Message = ({ message, onReply }) => {
       
       <div className="chat-footer opacity-50 text-xs flex gap-2 mt-1 items-center">
         {renderStatusIcon()}
-        <MessageReactions 
-          message={message} 
-          onReact={handleReact}
-          currentUserId={authUser?._id}
-        />
       </div>
       
       {/* Click outside to close menu */}

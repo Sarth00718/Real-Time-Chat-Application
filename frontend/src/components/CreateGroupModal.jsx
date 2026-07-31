@@ -49,7 +49,7 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated, users }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
+      <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
         <h2 className="text-2xl font-bold mb-4 dark:text-white">Create New Group</h2>
         
         <form onSubmit={handleCreateGroup}>
@@ -61,7 +61,7 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated, users }) => {
               type="text"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className="w-full px-3 py-2 border border-white/20 rounded-lg bg-white/5 text-white"
               placeholder="Enter group name"
               required
             />
@@ -74,7 +74,7 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated, users }) => {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className="w-full px-3 py-2 border border-white/20 rounded-lg bg-white/5 text-white"
               placeholder="Enter group description"
               rows="3"
             />
@@ -88,7 +88,7 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated, users }) => {
               {users?.filter(u => u._id !== authUser?._id).map(user => (
                 <div
                   key={user._id}
-                  className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                  className="flex items-center p-2 hover:bg-white/10 rounded-lg cursor-pointer transition-colors"
                   onClick={() => handleMemberToggle(user._id)}
                 >
                   <input

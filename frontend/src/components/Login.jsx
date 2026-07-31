@@ -25,11 +25,6 @@ function Login() {
     if (result.success) {
       navigate('/');
     }
-
-    setUser({
-      username: '',
-      password: ''
-    });
   };
 
   return (
@@ -48,13 +43,13 @@ function Login() {
         <form onSubmit={onSubmitHandler} className="space-y-6">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <FiUser className="text-gray-500" />
+              <FiUser className="text-white/70" />
             </div>
             <input
               type="text"
               id="username"
               placeholder="Username"
-              className="w-full px-4 py-3 pl-10 rounded-lg bg-white/10 text-white placeholder-gray-500 border border-white/20 
+              className="w-full px-4 py-3 pl-10 rounded-lg bg-white/10 text-white placeholder-white/70 border border-white/20 
                 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent"
               value={user.username}
               onChange={(e) => setUser({ ...user, username: e.target.value })}
@@ -65,13 +60,13 @@ function Login() {
 
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <FiLock className="text-gray-500" />
+              <FiLock className="text-white/70" />
             </div>
             <input
               type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Password"
-              className="w-full px-4 py-3 pl-10 pr-10 rounded-lg bg-white/10 text-white placeholder-gray-500 border border-white/20 
+              className="w-full px-4 py-3 pl-10 pr-10 rounded-lg bg-white/10 text-white placeholder-white/70 border border-white/20 
                 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent"
               value={user.password}
               onChange={(e) => setUser({ ...user, password: e.target.value })}
@@ -80,7 +75,7 @@ function Login() {
             />
             <button
               type="button"
-              className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-white transition-colors"
+              className="absolute inset-y-0 right-0 flex items-center pr-3 text-white/70 hover:text-white transition-colors"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FiEyeOff /> : <FiEye />}

@@ -34,14 +34,6 @@ export const editMessage = async (req, res) => {
             return res.status(403).json({ error: 'Only sender can edit message' });
         }
 
-        // Check if message is within 15 minutes (optional time limit)
-        const fifteenMinutes = 15 * 60 * 1000;
-        const messageAge = Date.now() - new Date(existingMessage.createdAt).getTime();
-        if (messageAge > fifteenMinutes) {
-            return res.status(400).json({ 
-                error: 'Messages can only be edited within 15 minutes of sending' 
-            });
-        }
 
         // Update message
         existingMessage.message = message;
@@ -49,10 +41,19 @@ export const editMessage = async (req, res) => {
         existingMessage.editedAt = new Date();
         await existingMessage.save();
 
-        // Emit socket event to receiver
-        const receiverSocketId = getRecieverSocketId(existingMessage.receiverId.toString());
-        if (receiverSocketId) {
-            io.to(receiverSocketId).emit('messageEdited', {
+        // Emit socket event to receiver or group
+        if (existingMessage.receiverId) {
+            const receiverSocketId = getRecieverSocketId(existingMessage.receiverId.toString());
+            if (receiverSocketId) {
+                io.to(receiverSocketId).emit('messageEdited', {
+                    messageId: existingMessage._id,
+                    message: existingMessage.message,
+                    edited: true,
+                    editedAt: existingMessage.editedAt
+                });
+            }
+        } else if (existingMessage.groupId) {
+            io.to(existingMessage.groupId.toString()).emit('messageEdited', {
                 messageId: existingMessage._id,
                 message: existingMessage.message,
                 edited: true,

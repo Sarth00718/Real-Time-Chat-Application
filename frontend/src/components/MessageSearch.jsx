@@ -34,23 +34,23 @@ const MessageSearch = ({ messages, onResultClick, onClose }) => {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="absolute top-0 left-0 right-0 bg-gray-800 shadow-lg z-20 rounded-t-lg"
+      className="absolute top-12 left-2 right-2 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl z-30 rounded-xl overflow-hidden"
     >
       {/* Search header */}
-      <div className="flex items-center gap-2 p-3 border-b border-gray-700">
-        <BiSearch className="text-gray-400 w-5 h-5" />
+      <div className="flex items-center gap-2 p-3 border-b border-white/10 bg-black/20">
+        <BiSearch className="text-white/70 w-5 h-5" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search messages..."
-          className="flex-1 bg-transparent text-white placeholder-gray-400 focus:outline-none"
+          className="flex-1 bg-transparent text-white placeholder-white/70 focus:outline-none"
           autoFocus
         />
         {searchQuery && (
           <button
             onClick={() => setSearchQuery('')}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-white/70 hover:text-white transition-colors"
           >
             <BiX className="w-5 h-5" />
           </button>
@@ -67,11 +67,11 @@ const MessageSearch = ({ messages, onResultClick, onClose }) => {
       {searchQuery && (
         <div className="max-h-64 overflow-y-auto">
           {searchResults.length === 0 ? (
-            <div className="p-4 text-center text-gray-400">
+            <div className="p-4 text-center text-white/70">
               No messages found for "{searchQuery}"
             </div>
           ) : (
-            <div className="divide-y divide-gray-700">
+            <div className="divide-y divide-white/10">
               {searchResults.map((msg) => (
                 <button
                   key={msg._id}
@@ -79,19 +79,19 @@ const MessageSearch = ({ messages, onResultClick, onClose }) => {
                     onResultClick(msg._id);
                     onClose();
                   }}
-                  className="w-full p-3 text-left hover:bg-gray-700 transition-colors"
+                  className="w-full p-3 text-left hover:bg-white/10 transition-colors"
                 >
                   <div className="text-sm text-white line-clamp-2">
                     {highlightText(msg.message, searchQuery)}
                   </div>
-                  <div className="text-xs text-gray-400 mt-1">
+                  <div className="text-xs text-white/70 mt-1">
                     {new Date(msg.createdAt).toLocaleString()}
                   </div>
                 </button>
               ))}
             </div>
           )}
-          <div className="p-2 text-xs text-gray-400 text-center border-t border-gray-700">
+          <div className="p-2 text-xs text-white/70 text-center border-t border-white/10 bg-black/20">
             {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
           </div>
         </div>

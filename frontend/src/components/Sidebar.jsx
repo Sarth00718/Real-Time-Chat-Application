@@ -162,7 +162,7 @@ const Sidebar = () => {
           <input
             value={search}
             onChange={handleSearchChange}
-            className='input input-bordered bg-white/20 text-white placeholder-gray-300 w-full pr-10 focus:ring-2 focus:ring-blue-400 focus:border-transparent'
+            className='input input-bordered bg-white/20 text-white placeholder-white/70 w-full pr-10 focus:ring-2 focus:ring-blue-400 focus:border-transparent'
             type="search"
             placeholder={activeTab === 'users' ? 'Search users...' : 'Search groups...'}
             aria-label={activeTab === 'users' ? 'Search users' : 'Search groups'}

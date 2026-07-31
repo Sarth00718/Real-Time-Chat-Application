@@ -24,7 +24,7 @@ const MessageEditModal = ({ message, onSave, onClose }) => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full mx-4"
+        className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 p-6 max-w-md w-full mx-4"
       >
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-white">Edit Message</h3>
@@ -39,7 +39,7 @@ const MessageEditModal = ({ message, onSave, onClose }) => {
         <textarea
           value={editedText}
           onChange={(e) => setEditedText(e.target.value)}
-          className="w-full bg-gray-700 text-white rounded-lg p-3 min-h-[100px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full bg-white/5 border border-white/20 text-white rounded-lg p-3 min-h-[100px] focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Type your message..."
           autoFocus
         />
@@ -47,7 +47,7 @@ const MessageEditModal = ({ message, onSave, onClose }) => {
         <div className="flex justify-end gap-2 mt-4">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+            className="px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-colors"
             disabled={isSaving}
           >
             Cancel

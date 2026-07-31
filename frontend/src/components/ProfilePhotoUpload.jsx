@@ -58,7 +58,7 @@ const ProfilePhotoUpload = ({ currentPhoto, onPhotoUpdate, onClose }) => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full mx-4"
+        className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 p-6 max-w-md w-full mx-4"
       >
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-white">Update Profile Photo</h3>
@@ -108,7 +108,7 @@ const ProfilePhotoUpload = ({ currentPhoto, onPhotoUpdate, onClose }) => {
         <div className="flex justify-end gap-2">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+            className="px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-colors"
             disabled={isUploading}
           >
             Cancel

@@ -58,7 +58,7 @@ const GroupInfo = ({ group, onClose, onGroupUpdated }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
+      <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold dark:text-white">Group Info</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
@@ -85,7 +85,7 @@ const GroupInfo = ({ group, onClose, onGroupUpdated }) => {
               type="text"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white mb-2"
+              className="w-full px-3 py-2 border border-white/20 rounded-lg bg-white/5 text-white mb-2"
             />
           ) : (
             <h3 className="text-xl font-semibold dark:text-white">{group.name}</h3>
@@ -94,7 +94,7 @@ const GroupInfo = ({ group, onClose, onGroupUpdated }) => {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
+              className="w-full px-3 py-2 border border-white/20 rounded-lg bg-white/5 text-white"
               rows="2"
             />
           ) : (
@@ -136,7 +136,7 @@ const GroupInfo = ({ group, onClose, onGroupUpdated }) => {
           </h4>
           <div className="space-y-2">
             {group.members.map(member => (
-              <div key={member.userId._id} className="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+              <div key={member.userId._id} className="flex items-center justify-between p-2 hover:bg-white/10 rounded-lg transition-colors">
                 <div className="flex items-center">
                   <img
                     src={member.userId.profilePhoto}

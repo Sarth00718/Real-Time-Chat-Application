@@ -50,7 +50,7 @@ const MessageForwardModal = ({ isOpen, onClose, message, users, groups }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
+      <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
         <h2 className="text-2xl font-bold mb-4 dark:text-white">Forward Message</h2>
 
         <div className="mb-4">
@@ -59,7 +59,7 @@ const MessageForwardModal = ({ isOpen, onClose, message, users, groups }) => {
             {users?.map(user => (
               <div
                 key={user._id}
-                className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                className="flex items-center p-2 hover:bg-white/10 rounded-lg cursor-pointer transition-colors"
                 onClick={() => handleUserToggle(user._id)}
               >
                 <input
@@ -86,7 +86,7 @@ const MessageForwardModal = ({ isOpen, onClose, message, users, groups }) => {
               {groups.map(group => (
                 <div
                   key={group._id}
-                  className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                  className="flex items-center p-2 hover:bg-white/10 rounded-lg cursor-pointer transition-colors"
                   onClick={() => handleGroupToggle(group._id)}
                 >
                   <input

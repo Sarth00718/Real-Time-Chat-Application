@@ -27,26 +27,25 @@ const MessageActions = ({ message, onReply, onForward, isGroupAdmin, currentUser
     }
   };
 
-  const canPin = message.groupId ? isGroupAdmin : true;
   const isSender = message.senderId._id === currentUserId;
 
   return (
     <div className="relative">
       <button
         onClick={() => setShowMenu(!showMenu)}
-        className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+        className="p-1 hover:bg-white/20 rounded transition-colors"
       >
         ⋮
       </button>
 
       {showMenu && (
-        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-700 z-10">
+        <div className="absolute right-0 mt-2 w-48 bg-white/10 backdrop-blur-md rounded-lg shadow-lg border border-white/20 z-10">
           <button
             onClick={() => {
               onReply(message);
               setShowMenu(false);
             }}
-            className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+            className="w-full text-left px-4 py-2 hover:bg-white/20 flex items-center gap-2 transition-colors"
           >
             <span>↩️</span> Reply
           </button>
@@ -56,30 +55,11 @@ const MessageActions = ({ message, onReply, onForward, isGroupAdmin, currentUser
               onForward(message);
               setShowMenu(false);
             }}
-            className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+            className="w-full text-left px-4 py-2 hover:bg-white/20 flex items-center gap-2 transition-colors"
           >
             <span>➡️</span> Forward
           </button>
 
-          {canPin && (
-            <>
-              {message.isPinned ? (
-                <button
-                  onClick={handleUnpin}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
-                >
-                  <span>📌</span> Unpin
-                </button>
-              ) : (
-                <button
-                  onClick={handlePin}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
-                >
-                  <span>📌</span> Pin
-                </button>
-              )}
-            </>
-          )}
         </div>
       )}
     </div>

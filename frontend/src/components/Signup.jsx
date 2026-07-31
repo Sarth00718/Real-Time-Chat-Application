@@ -29,15 +29,6 @@ function Signup() {
     if (result.success) {
       // Redirect to homepage instead of login
       navigate('/');
-    } else {
-      // Reset form only on error
-      setUser({
-        fullName: '',
-        username: '',
-        password: '',
-        confirmPassword: '',
-        gender: ''
-      });
     }
   };
 
