@@ -7,6 +7,8 @@ import { useOnlineStatus } from '../hooks/useOnlineStatus';
 import { useTypingIndicator } from '../hooks/useTypingIndicator';
 import FilePreview from './FilePreview';
 import { toast } from 'react-hot-toast';
+import { useUser } from '../contexts/UserContext';
+import VoiceRecorder from './VoiceRecorder';
 
 function SendInput({ replyToMessage, onCancelReply }) {
   const [message, setMessage] = useState('');
@@ -17,7 +19,8 @@ function SendInput({ replyToMessage, onCancelReply }) {
   const isOnline = useOnlineStatus();
   const { sendTypingIndicator } = useTypingIndicator();
 
-  const { sendMessage: sendMsg } = useChat();
+  const { sendMessage: sendMsg, addMessage } = useChat();
+  const { selectedUser, selectedGroup } = useUser();
 
   // Handle typing indicator
   useEffect(() => {
@@ -189,6 +192,12 @@ function SendInput({ replyToMessage, onCancelReply }) {
         >
           <BsEmojiSmile />
         </button>
+
+        <VoiceRecorder
+          onSend={(message) => addMessage(message)}
+          receiverId={selectedUser?._id}
+          groupId={selectedGroup?._id}
+        />
 
         {/* Input + send */}
         <div className="relative w-full">

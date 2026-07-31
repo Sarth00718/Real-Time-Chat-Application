@@ -76,7 +76,7 @@ function MessageContainor() {
                 <p className="text-white font-semibold">
                   {isGroupChat ? currentChat?.name : currentChat?.fullName}
                 </p>
-                <p className="text-xs text-gray-300">
+                <p className="text-xs text-white/70">
                   {isGroupChat 
                     ? `${currentChat?.members?.length || 0} members` 
                     : currentChat?.username

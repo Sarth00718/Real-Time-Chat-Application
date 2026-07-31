@@ -10,6 +10,7 @@ import { BsCheck, BsCheckAll, BsTrash, BsPencil, BsPin, BsReply, BsForward } fro
 import { useOnlineStatus } from '../hooks/useOnlineStatus';
 import MessageEditModal from './MessageEditModal';
 import MessageForwardModal from './MessageForwardModal';
+import VoiceMessagePlayer from './VoiceMessagePlayer';
 import apiService from '../services/apiService';
 
 const Message = ({ message, onReply }) => {
@@ -129,11 +130,11 @@ const Message = ({ message, onReply }) => {
         <span className="text-xs opacity-70 text-white font-semibold">
           {isOwnMessage ? 'You' : (message?.senderId?.fullName || selectedUser?.fullName)}
         </span>
-        <time className="text-xs opacity-50 ml-2 text-gray-300">
+        <time className="text-xs opacity-80 ml-2 text-white/70">
           {formatMessageTime(message?.createdAt || message?.timestamp)}
         </time>
         {message?.edited && (
-          <span className="text-xs opacity-50 ml-2 text-gray-400 italic">(edited)</span>
+          <span className="text-xs opacity-80 ml-2 text-white/70 italic">(edited)</span>
         )}
       </div>
       
@@ -193,6 +194,11 @@ const Message = ({ message, onReply }) => {
                 </div>
               );
             })}
+            
+            {/* Voice Message */}
+            {(message?.messageType === 'voice' || message?.voiceMessage) && message?.voiceMessage?.url && (
+              <VoiceMessagePlayer voiceMessage={message.voiceMessage} />
+            )}
           </div>
         </div>
         

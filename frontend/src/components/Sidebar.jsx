@@ -111,7 +111,7 @@ const Sidebar = () => {
         </div>
         <div className="flex-1 text-left">
           <h3 className="font-semibold text-white truncate">{authUser?.fullName}</h3>
-          <p className="text-xs text-gray-400 truncate">{authUser?.username}</p>
+          <p className="text-xs text-white/70 truncate">{authUser?.username}</p>
         </div>
       </button>
 
@@ -193,7 +193,7 @@ const Sidebar = () => {
 
       {/* Search results indicator */}
       {search && !loading && !groupsLoading && (
-        <div className="text-sm text-gray-300 mb-2">
+        <div className="text-sm text-white/70 mb-2">
           {activeTab === 'users' ? (
             filteredUsers?.length === 0 ? (
               <span className="text-red-300">No users found for "{search}"</span>
@@ -230,7 +230,7 @@ const Sidebar = () => {
             loading ? (
               <UserSkeleton />
             ) : filteredUsers?.length === 0 && search ? (
-              <div className="text-center text-gray-400 py-8">
+              <div className="text-center text-white/70 py-8">
                 <BiSearchAlt2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
                 <p>No users found matching "{search}"</p>
                 <button 
@@ -247,7 +247,7 @@ const Sidebar = () => {
             groupsLoading ? (
               <UserSkeleton />
             ) : filteredGroups?.length === 0 ? (
-              <div className="text-center text-gray-400 py-8">
+              <div className="text-center text-white/70 py-8">
                 <HiUserGroup className="w-12 h-12 mx-auto mb-4 opacity-50" />
                 <p>{search ? `No groups found matching "${search}"` : 'No groups yet'}</p>
                 <button 
@@ -282,7 +282,7 @@ const Sidebar = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-white truncate">{group.name}</h3>
-                      <p className="text-xs text-gray-400 truncate">
+                      <p className="text-xs text-white/70 truncate">
                         {group.members?.length || 0} members
                       </p>
                     </div>

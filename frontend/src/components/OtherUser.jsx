@@ -47,14 +47,14 @@ const OtherUser = ({ user }) => {
         <div className='flex-1 min-w-0'>
           <div className='flex justify-between items-center'>
             <h3 className={`font-medium truncate ${
-              isSelected ? 'text-white' : 'text-gray-200'
+              isSelected ? 'text-white' : 'text-white/90'
             }`}>
               {user?.fullName}
             </h3>
           </div>
 
           <div className="flex justify-between items-center mt-1">
-            <p className="text-xs truncate text-gray-400">
+            <p className="text-xs truncate text-white/70">
               {isOnline ? 'Online' : formatLastSeen(user?.lastSeen)}
             </p>
             {unreadCount > 0 && !isSelected && (

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import apiService from '../services/apiService';
+import { IoMic } from 'react-icons/io5';
 
 const VoiceRecorder = ({ onSend, receiverId, groupId }) => {
   const [isRecording, setIsRecording] = useState(false);
@@ -67,7 +68,7 @@ const VoiceRecorder = ({ onSend, receiverId, groupId }) => {
     if (!audioBlob) return;
 
     const formData = new FormData();
-    formData.append('audio', audioBlob, 'voice-message.webm');
+    formData.append('voice', audioBlob, 'voice-message.webm');
     formData.append('duration', duration);
     if (receiverId) formData.append('receiverId', receiverId);
     if (groupId) formData.append('groupId', groupId);
@@ -99,18 +100,18 @@ const VoiceRecorder = ({ onSend, receiverId, groupId }) => {
 
   if (audioBlob) {
     return (
-      <div className="flex items-center gap-2 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
+      <div className="absolute bottom-20 left-4 right-4 z-50 flex items-center gap-3 p-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl">
         <audio src={URL.createObjectURL(audioBlob)} controls className="flex-1" />
-        <span className="text-sm dark:text-white">{formatDuration(duration)}</span>
+        <span className="text-sm text-white font-medium">{formatDuration(duration)}</span>
         <button
           onClick={sendVoiceMessage}
-          className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg hover:scale-105 transition shadow-lg font-semibold"
         >
           Send
         </button>
         <button
           onClick={cancelRecording}
-          className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600"
+          className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition shadow-lg"
         >
           Cancel
         </button>
@@ -120,18 +121,18 @@ const VoiceRecorder = ({ onSend, receiverId, groupId }) => {
 
   if (isRecording) {
     return (
-      <div className="flex items-center gap-2 p-2 bg-red-100 dark:bg-red-900 rounded-lg">
-        <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-        <span className="flex-1 dark:text-white">Recording... {formatDuration(duration)}</span>
+      <div className="absolute bottom-20 left-4 right-4 z-50 flex items-center gap-4 p-4 bg-white/10 backdrop-blur-xl border border-red-500/50 rounded-2xl shadow-2xl">
+        <div className="w-4 h-4 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+        <span className="flex-1 text-white font-medium text-lg">Recording... {formatDuration(duration)}</span>
         <button
           onClick={stopRecording}
-          className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition shadow-lg font-semibold"
         >
           Stop
         </button>
         <button
           onClick={cancelRecording}
-          className="px-3 py-1 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+          className="px-6 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition shadow-lg"
         >
           Cancel
         </button>
@@ -141,11 +142,12 @@ const VoiceRecorder = ({ onSend, receiverId, groupId }) => {
 
   return (
     <button
+      type="button"
       onClick={startRecording}
-      className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
+      className="text-white text-xl p-2 rounded-full hover:bg-white/20 transition"
       title="Record voice message"
     >
-      🎤
+      <IoMic />
     </button>
   );
 };
